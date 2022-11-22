@@ -1,6 +1,14 @@
 service: wl-backend-functions 
 frameworkVersion: '3'
 
+plugins:
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
 provider:
   name: aws
   runtime: nodejs16.x
@@ -12,4 +20,11 @@ functions:
     events:
       - httpApi:
           path: /
+          method: get
+
+  asosmin:
+    handler: kma-scraper/handler.asosminweather
+    events:
+      - httpApi:
+          path: /asosmin/{datetime}
           method: get
