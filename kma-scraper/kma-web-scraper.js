@@ -138,7 +138,7 @@ export class KmaScraper {
             const strContents = iconv.decode(body, 'euc-kr').toString();
             let $ = cheerio.load(strContents);
 
-            result.body = this.#parseASOS($);
+            result.body = JSON.stringify(this.#parseASOS($));
         }
         catch(e) {
             console.error(e);
