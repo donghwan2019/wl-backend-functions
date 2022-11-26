@@ -16,6 +16,12 @@ provider:
   region: ap-northeast-2
   memorySize: 1024
   timeout: 29
+  httpApi:
+    cors: true
+  logs:
+    httpApi:
+      format: '{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","routeKey":"$context.routeKey", "status":"$context.status","protocol":"$context.protocol", "responseLength":"$context.responseLength" }'
+
 
 package:
   individually: true
