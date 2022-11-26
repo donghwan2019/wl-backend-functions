@@ -6,9 +6,11 @@
     "node": ">=16"
   },
   "scripts": {
-    "local": "sls invoke local --function asosmin",
+    "local": "sls invoke local --stage dev --function asosmin",
     "deploy:dev": "sls deploy --stage dev",
-    "deploy:prod": "sls deploy --stage prod"
+    "deploy:prod": "sls deploy --stage prod",
+    "remove:dev": "sls remove --stage dev",
+    "remove:prod": "sls remove --stage prod"
   },
   "repository": {
     "type": "git",
