@@ -12,21 +12,56 @@ custom:
 provider:
   name: aws
   runtime: nodejs16.x
+  stage: ${opt:stage}
   region: ap-northeast-2
   memorySize: 1024
   timeout: 29
+
+package:
+  individually: true
 
 functions:
   hello:
     handler: handler.hello
     events:
       - httpApi:
-          path: /
+          path: /${self:provider.stage}
           method: get
 
   asosmin:
     handler: kma-scraper/handler.asosminweather
     events:
       - httpApi:
-          path: /asosmin/{datetime}
+          path: /${self:provider.stage}/asosmin/{datetime}
           method: get
+
+resources:  
+  Resources:  
+    CloudFrontDistribution:  
+      Type: AWS::CloudFront::Distribution  
+      Properties:  
+        DistributionConfig:  
+          Comment: WL Backend Functions CloudFront Distribution  
+          Origins:
+            - Id: WLBackendFunctionsOrigin  
+              DomainName:
+                Fn::Join:
+                  - ''
+                  - - Ref: HttpApi
+                    - '.execute-api.'
+                    - '${self:provider.region}'
+                    - '.amazonaws.com'
+              OriginPath: '/${self:provider.stage}'
+              CustomOriginConfig:
+                OriginProtocolPolicy: https-only
+          Enabled: true  
+          DefaultCacheBehavior:  
+            TargetOriginId: WLBackendFunctionsOrigin
+            AllowedMethods:
+              - GET
+              - HEAD
+            ViewerProtocolPolicy: 'redirect-to-https' 
+            DefaultTTL: 30
+            ForwardedValues:  
+              QueryString: false  
+            Compress: 'true'
