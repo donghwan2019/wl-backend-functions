@@ -1,0 +1,8 @@
+{
+    "queryStringParameters": {
+        "base_date": "20221207",
+        "base_time": "2100",
+        "nx": "60",
+        "ny": "127"
+    }
+}

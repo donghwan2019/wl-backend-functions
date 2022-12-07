@@ -64,6 +64,27 @@ functions:
           path: /${self:provider.stage}/minudustfrcstdspth/{datetime}
           method: get
 
+  vilagefcst:
+    handler: kma/handler.vilagefcst
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/vilagefcst
+          method: get
+
+  ultrasrtfcst:
+    handler: kma/handler.ultrasrtfcst
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/ultrasrtfcst
+          method: get
+
+  ultrasrtncst:
+    handler: kma/handler.ultrasrtncst
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/ultrasrtncst
+          method: get
+
 resources:  
   Resources:  
     CloudFrontDistribution:  
