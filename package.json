@@ -6,6 +6,9 @@
     "node": ">=16"
   },
   "scripts": {
+    "local:ultrasrtncst": "sls invoke local --stage dev --function ultrasrtncst --path ./test/ultrasrtncst-input-data.json",
+    "local:ultrasrtfcst": "sls invoke local --stage dev --function ultrasrtfcst --path ./test/ultrasrtfcst-input-data.json",
+    "local:vilagefcst": "sls invoke local --stage dev --function vilagefcst --path ./test/vilagefcst-input-data.json",
     "local:ctprvnrltmmesurednsty": "sls invoke local --stage dev --function ctprvnrltmmesurednsty",
     "local:msrstnlist": "sls invoke local --stage dev --function msrstnlist",
     "local:asosmin": "sls invoke local --stage dev --function asosmin",

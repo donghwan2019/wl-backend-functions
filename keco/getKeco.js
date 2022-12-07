@@ -8,7 +8,7 @@ export class Keco {
         this.domain = "http://apis.data.go.kr";
         this.path = "";
         this.params = {
-            serviceKey : process.env.KECO_SERVICE_KEY,
+            serviceKey : process.env.DATA_GO_KR_SERVICE_KEY,
             pageNo: 1,
             numOfRows : 9999,
             returnType : 'json'
