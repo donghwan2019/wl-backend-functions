@@ -1,4 +1,4 @@
-import { Keco } from "./keco.js";
+import { Keco } from "./getKeco.js";
 
 /**
  * 기능명 : 측정소 목록 조회

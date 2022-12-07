@@ -1,4 +1,4 @@
-import { Keco } from "./keco.js";
+import { Keco } from "./getKeco.js";
 
 /**
  * 시도별 실시간 측정정보 조회

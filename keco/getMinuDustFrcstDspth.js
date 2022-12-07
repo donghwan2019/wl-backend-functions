@@ -1,4 +1,4 @@
-import { Keco } from "./keco.js";
+import { Keco } from "./getKeco.js";
 
 /**
  * 기능명 : 대기질 예보통보 조회
@@ -19,7 +19,7 @@ export class MinuDustFrcstDspth extends Keco {
      * @param {*} kecoData 
      * @param {string} kecoData.header.resultCode
      * @param {number} kecoData.body.totalCount -
-     * @param {object[]} kecoData.body.items - 
+     * @param {object[]} kecoData.body.items -  {dataTime, informCode, informOverall, informCause, informGrade, actionKnack, imageUrl1, imageUrl2, imageUrl3, imageUrl4, imageUrl5, imageUrl6, imageUrl7, imageUrl8, imageUrl9, informData}
      * @returns 
      */
     async #parseKecoData(kecoData) {
