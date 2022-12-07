@@ -1,4 +1,4 @@
-import { Keco } from './Keco.js';
+import { Keco } from './getKeco.js';
 
 /**
  * 기능명: 초미세먼지 주간예보 조회

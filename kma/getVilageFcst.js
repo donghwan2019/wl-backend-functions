@@ -21,10 +21,6 @@ export class VilageFcst extends Kma {
      * @param {string} kmaData.body.items[].fcstDate
      * @param {string} kmaData.body.items[].fcstTime
      * @param {string} kmaData.body.items[].fcstValue
-     * @param {number} kmaData.body.items[].nx
-     * @param {number} kmaData.body.items[].ny
-     * @param {string} kmaData.body.items[].baseDate
-     * @param {string} kmaData.body.items[].baseTime
      * @returns 
      */
     #parseKmaData(kmaData) {

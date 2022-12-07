@@ -18,8 +18,10 @@ export class UltraSrtFcst extends Kma {
 
     /**
      * 
-     * @param {object} kmaData 
      * @param {string} kmaData.body.items[].category - T1H, RN1, SKY, UUU, VVV, REH, PTY, LGT, VEC, WSD
+     * @param {string} kmaData.body.items[].fcstDate
+     * @param {string} kmaData.body.items[].fcstTime
+     * @param {string} kmaData.body.items[].fcstValue
      * @returns 
      */
     #parseKmaData(kmaData) {
