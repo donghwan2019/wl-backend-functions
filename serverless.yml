@@ -1,10 +1,10 @@
 service: wl-backend-functions 
 frameworkVersion: '3'
 
+useDotenv: true
+
 plugins:
   - serverless-webpack
-  - serverless-dotenv-plugin
-
 
 custom:
   webpack:
@@ -13,17 +13,17 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs20.x
+  architecture: arm64
   stage: ${opt:stage}
   region: ap-northeast-2
-  memorySize: 1024
+  memorySize: 256
   timeout: 29
   httpApi:
     cors: true
   logs:
     httpApi:
       format: '{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","routeKey":"$context.routeKey", "status":"$context.status","protocol":"$context.protocol", "responseLength":"$context.responseLength" }'
-
 
 package:
   individually: true
@@ -42,6 +42,8 @@ functions:
       - httpApi:
           path: /${self:provider.stage}/asosmin/{datetime}
           method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
 
   msrstnlist:
     handler: keco/handler.msrstnList
@@ -49,6 +51,8 @@ functions:
       - httpApi:
           path: /${self:provider.stage}/msrstnlist
           method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
 
   ctprvnrltmmesurednsty:
     handler: keco/handler.ctprvnrltmmesurednsty
@@ -56,6 +60,8 @@ functions:
       - httpApi:
           path: /${self:provider.stage}/ctprvnrltmmesurednsty/{datetime}
           method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
 
   minudustfrcstdspth:
     handler: keco/handler.minudustfrcstdspth
@@ -63,6 +69,8 @@ functions:
       - httpApi:
           path: /${self:provider.stage}/minudustfrcstdspth/{datetime}
           method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
 
   vilagefcst:
     handler: kma/handler.vilagefcst
@@ -70,6 +78,8 @@ functions:
       - httpApi:
           path: /${self:provider.stage}/vilagefcst
           method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
 
   ultrasrtfcst:
     handler: kma/handler.ultrasrtfcst
@@ -77,6 +87,8 @@ functions:
       - httpApi:
           path: /${self:provider.stage}/ultrasrtfcst
           method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
 
   ultrasrtncst:
     handler: kma/handler.ultrasrtncst
@@ -84,6 +96,8 @@ functions:
       - httpApi:
           path: /${self:provider.stage}/ultrasrtncst
           method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
 
 resources:  
   Resources:  
@@ -111,7 +125,7 @@ resources:
               - GET
               - HEAD
             ViewerProtocolPolicy: 'redirect-to-https' 
-            DefaultTTL: 30
+            DefaultTTL: 60
             ForwardedValues:  
               QueryString: false  
             Compress: 'true'
