@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "handler.js",
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "scripts": {
     "local:ultrasrtncst": "sls invoke local --stage dev --function ultrasrtncst --path ./test/ultrasrtncst-input-data.json",
