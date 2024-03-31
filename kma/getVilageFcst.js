@@ -1,3 +1,5 @@
+
+import moment from 'moment-timezone';
 import { Kma } from './getKma.js';
 
 /**
@@ -9,6 +11,44 @@ export class VilageFcst extends Kma {
     constructor() {
         super();
         this.path = "/getVilageFcst";
+        let now = moment().tz('Asia/Seoul');
+        let minute = now.minute();
+        //check if the current time is before 10 minutes past the next base time
+        if (minute <= 10) {
+            now.subtract(1, 'hours');
+        }
+        //make the base time to the nearest base time of the current time
+        let hour = now.hour();
+        if (hour < 2) {
+            now.subtract(1, 'days');
+            this.params.base_time = '2300';
+        }
+        else if (hour < 5) {
+            this.params.base_time = '0200';
+        }
+        else if (hour < 8) {
+            this.params.base_time = '0500';
+        }
+        else if (hour < 11) {
+            this.params.base_time = '0800';
+        }
+        else if (hour < 14) {
+            this.params.base_time = '1100';
+        }
+        else if (hour < 17) {
+            this.params.base_time = '1400';
+        }
+        else if (hour < 20) {
+            this.params.base_time = '1700';
+        }
+        else if (hour < 23) {
+            this.params.base_time = '2000';
+        }
+        else {
+            this.params.base_time = '2300';
+        }
+
+        this.params.base_date = now.format('YYYYMMDD');
     } 
 
     async #getKmaData() {
@@ -24,7 +64,41 @@ export class VilageFcst extends Kma {
      * @returns 
      */
     #parseKmaData(kmaData) {
-        return super.parseKmaData(kmaData);
+        let {statusCode, body}  = super.parseKmaData(kmaData);
+        if (statusCode !== 200) {
+            return { statusCode: statusCode, body: body };
+        }
+        // console.info(body.item);
+        let result = {
+            nx: this.params.nx,
+            ny: this.params.ny,
+            baseDate: moment(this.params.base_date + this.params.base_time, 'YYYYMMDDHHmm', "Asia/Seoul").toDate(),
+            baseDateTimeStr: this.params.base_date + this.params.base_time,
+        };
+
+        let items = [];
+
+        body.item.forEach(element => {
+            let item = items.find(item => item.fcstDate === element.fcstDate && item.fcstTime === element.fcstTime);
+            if (item === undefined) {
+                item = { 
+                    fcstDate : moment(element.fcstDate + element.fcstTime, 'YYYYMMDDHHmm', "Asia/Seoul").toDate(),
+                    fcstDateStr: element.fcstDate, 
+                    fcstTimeStr: element.fcstTime, 
+                    data: [] 
+                };
+                items.push(item);
+            }
+            let data = item.data.find(data => data.category === element.category);
+            if (data === undefined) {
+                data = { category: element.category, value: element.fcstValue };
+                item.data.push(data);
+            }
+        });
+
+        result.items = items;
+        console.log(result);
+        return { statusCode: 200, body: result };
     }
 
     #parseEvent(event) {
@@ -50,8 +124,7 @@ export class VilageFcst extends Kma {
         }
 
         let result = this.#parseKmaData(kmaData);
-        result.body = JSON.stringify(result.body, null, 2);
-
+        // result.body = JSON.stringify(result.body, null, 2);
         return result;
     }
 }

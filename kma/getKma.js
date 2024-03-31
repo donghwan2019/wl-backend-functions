@@ -11,8 +11,8 @@ export class Kma {
             dataType : 'json',
             base_date : new Date().toISOString().slice(0, 10).replace(/-/g, ''),
             base_time : new Date().getHours() + '00',
-            nx : 0,
-            ny : 0,
+            nx : 60,  // 서울특별시
+            ny : 127, // 서울특별시
         };
     }
 
@@ -59,7 +59,7 @@ export class Kma {
         if (kmaData.body?.totalCount === 0) {
             return { statusCode: 500, body: 'No data.' };
         }
-        console.info(kmaData.body.items);
+        // console.info(kmaData.body.items);
 
         return { statusCode: 200, body: kmaData.body.items };
     }
@@ -75,11 +75,16 @@ export class Kma {
      */
     parseEvent(event) {
         const { queryStringParameters } = event;
-        const { base_date, base_time, nx, ny } = queryStringParameters;
-        this.params.base_date = base_date;
-        this.params.base_time = base_time;
-        this.params.nx = parseInt(nx);
-        this.params.ny = parseInt(ny);
+        if (queryStringParameters === undefined || queryStringParameters === null) {
+            console.info('queryStringParameters is null.');
+        }
+        else {
+            const { base_date, base_time, nx, ny } = queryStringParameters;
+            this.params.base_date = base_date;
+            this.params.base_time = base_time;
+            this.params.nx = parseInt(nx);
+            this.params.ny = parseInt(ny);
+        }
     }
 
     /**

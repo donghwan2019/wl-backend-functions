@@ -99,6 +99,42 @@ functions:
     environment:
       DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
 
+  midfcst:
+    handler: kma/handler.midfcst
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/midfcst
+          method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
+  midlandfcst:
+    handler: kma/handler.midlandfcst
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/midlandfcst
+          method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+  
+  midta:
+    handler: kma/handler.midta
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/midta
+          method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+  
+  midseafcst:
+    handler: kma/handler.midseafcst
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/midseafcst
+          method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
 resources:  
   Resources:  
     CloudFrontDistribution:  
@@ -128,4 +164,4 @@ resources:
             DefaultTTL: 60
             ForwardedValues:  
               QueryString: false  
-            Compress: 'true'
+            Compress: true
