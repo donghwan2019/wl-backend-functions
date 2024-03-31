@@ -1,3 +1,5 @@
+
+import moment from "moment-timezone";
 import { Kma } from "./getKma.js";
 
 /**
@@ -10,6 +12,13 @@ export class UltraSrtNcst extends Kma {
     constructor() {
         super();
         this.path = "/getUltraSrtNcst";
+        
+        let now = moment().tz('Asia/Seoul');
+        let minute = now.minute();
+        if (minute <= 40) {
+            now.subtract(1, 'hours');
+            this.params.base_time = now.format('HH') + '00';
+        }
     }
 
     async #getKmaData() {
@@ -24,7 +33,42 @@ export class UltraSrtNcst extends Kma {
      * @returns 
      */
     #parseKmaData(kmaData) {
-        return super.parseKmaData(kmaData);
+        let {statusCode, body} = super.parseKmaData(kmaData);
+         
+        if (statusCode !== 200) {
+            return { statusCode: statusCode, body: body };
+        }
+
+        let result = {
+            nx: this.params.nx,
+            ny: this.params.ny,
+            baseDate: moment(this.params.base_date + this.params.base_time, 'YYYYMMDDHHmm', "Asia/Seoul").toDate(),
+            baseDateTimeStr: this.params.base_date + this.params.base_time,
+        };
+
+        let items = [];
+        body.item.forEach(element => {
+            let item = items.find(item => item.fcstDate === element.baseDate && item.fcstTime === element.baseTime);
+
+            if (item === undefined) {
+                item = { 
+                    fcstDate: moment(element.baseDate + element.baseTime, 'YYYYMMDDHHmm', "Asia/Seoul").toDate(),
+                    fcstDateStr: element.baseDate, 
+                    fcstTimeStr: element.baseTime, 
+                    data: [] 
+                };
+                items.push(item);
+            }
+            let data = item.data.find(data => data.category === element.category);
+            if (data === undefined) {
+                data = { category: element.category, value: element.obsrValue };
+                item.data.push(data);
+            }
+        });
+
+        result.items = items;
+        console.log(items);
+        return { statusCode: 200, body: result };
     }
 
     #parseEvent(event) {
@@ -45,7 +89,7 @@ export class UltraSrtNcst extends Kma {
         }
 
         let result = this.#parseKmaData(KmaData);
-        result.body = JSON.stringify(result.body, null, 2);
+        // result.body = JSON.stringify(result.body, null, 2);
         return result;
     }
 }
