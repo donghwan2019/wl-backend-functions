@@ -2,6 +2,8 @@
 import moment from "moment-timezone";
 import { MidFcstInfoService } from "./MidFcstInfoService";
 
+import regCodeList from '../data/MidFcstInfoService_regCode.csv';
+
 /**
  * 중기기온조회
  * regId 예보구역 코드 별첨 엑셀파일 참조
@@ -12,6 +14,13 @@ export class MidTa extends MidFcstInfoService {
     super();
     this.path = '/getMidTa';
     this.params.regId = '11B10101'; // 서울
+
+    //load data/MidFcstInfoService_regCode.csv
+    this.regCodeList = [];
+    for (const regCode of regCodeList) {
+      this.regCodeList.push({ regName: regCode['구역'], regId: regCode['예보구역코드'] });
+    }
+    // console.info(this.regCodeList);
   }
 
   #transformData(source, baseDate) {
@@ -56,7 +65,7 @@ export class MidTa extends MidFcstInfoService {
     let data = this.#transformData(item, baseDate);
     result.data = data;
 
-    console.info(result);
+    // console.info(result);
     return { statusCode: 200, body: result };
   }
 
@@ -76,4 +85,16 @@ export class MidTa extends MidFcstInfoService {
     let result = this.#parseKmaData(kmaData);
     return result;
   } 
+
+  getRegId(reg_1depth, reg_2depth) {
+    let regId = this.regCodeList.find(reg => 
+      reg_2depth.includes(reg.regName)
+    );
+    if (regId == undefined) {
+      regId = this.regCodeList.find(reg => 
+        reg_1depth.includes(reg.regName)
+      );
+    }
+    return regId ? regId.regId : null;
+  }
 }

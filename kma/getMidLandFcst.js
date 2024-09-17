@@ -22,6 +22,11 @@ export class MidLandFcst extends MidFcstInfoService {
     { regId: '11G00000', regName: '제주도' },
   ];
 
+  gangwonYeonSeo = [ "춘천", "원주", "철원", "화천", "양구", "인제", "홍천", "횡성", "평창", "영월", "정선" ];
+
+  gangwonYeongDong = [ "강릉", "속초", "동해", "삼척", "태백", "고성", "양양"];
+
+  
   constructor() {
     super();
     this.path = '/getMidLandFcst'; 
@@ -72,7 +77,7 @@ export class MidLandFcst extends MidFcstInfoService {
     let data = this.#transformData(item, baseDate);
     result.data = data;
 
-    console.info(result);
+    // console.info(result);
     return { statusCode: 200, body: result };
   }
 
@@ -90,5 +95,27 @@ export class MidLandFcst extends MidFcstInfoService {
     }
     let result = this.#parseKmaData(kmaData);
     return result;
+  }
+
+  getRegId(reg_1depth, reg_2depth) {
+    // Remove '특별시', '광역시', '특별자치도', '특별자치시' from the regName if present
+    const simplifiedRegName = reg_1depth.replace(/(특별시|광역시|특별자치도|특별자치시)/, '').trim();
+    
+    let regId = this.regIdList.find(reg => 
+      reg.regName.includes(simplifiedRegName)
+    );
+
+    if (regId === '11D10000' || regId === '11D20000') {
+
+      const reg_2depth_simple = reg_2depth.slice(0, 2);
+      if (this.gangwonYeonSeo.includes(reg_2depth_simple)) {
+        regId = '11D10000';
+      }
+      else if (this.gangwonYeongDong.includes(reg_2depth_simple)) {
+        regId = '11D20000';
+      }
+    }
+
+    return regId ? regId.regId : null;
   }
 }

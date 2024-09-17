@@ -12,6 +12,15 @@ module.exports = {
         loader: "babel-loader",
         include: __dirname,
         exclude: /node_modules/
+      },
+      {
+        test: /\.csv$/,
+        loader: 'csv-loader',
+        options: {
+          dynamicTyping: true,
+          header: true,
+          skipEmptyLines: true
+        }
       }
     ]
   }

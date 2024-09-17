@@ -135,6 +135,24 @@ functions:
     environment:
       DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
 
+  todayweather:
+    handler: todayweather/handler.todayweather
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/todayweather
+          method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
+  geo:
+    handler: geo/handler.getInfo
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/geo
+          method: get
+    environment:
+      DAUM_API_KEY: ${env:DAUM_API_KEY}
+
 resources:  
   Resources:  
     CloudFrontDistribution:  

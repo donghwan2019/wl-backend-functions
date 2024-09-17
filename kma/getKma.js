@@ -11,15 +11,22 @@ export class Kma {
             dataType : 'json',
             base_date : new Date().toISOString().slice(0, 10).replace(/-/g, ''),
             base_time : new Date().getHours() + '00',
-            nx : 60,  // 서울특별시
-            ny : 127, // 서울특별시
+            nx : -1,    //60 서울특별시
+            ny : -1,    //127 서울특별시
         };
     }
 
     async getKmaData() {
         const url = this.domain + this.path;
         console.info({ url: url, params: this.params });
+        if (this.params.nx === -1 || this.params.ny === -1) {
+            return { statusCode: 500, body: 'Invalid nx or ny.' };
+        }
+
         const { data } = await axios.get(url, { params: this.params });
+        if (data?.response == undefined) {
+            console.log(`data: ${data}`);
+        }
         return data?.response;
     }
 
@@ -76,14 +83,15 @@ export class Kma {
     parseEvent(event) {
         const { queryStringParameters } = event;
         if (queryStringParameters === undefined || queryStringParameters === null) {
-            console.info('queryStringParameters is null.');
+            console.warn('queryStringParameters is null.');
         }
         else {
             const { base_date, base_time, nx, ny } = queryStringParameters;
-            this.params.base_date = base_date;
-            this.params.base_time = base_time;
-            this.params.nx = parseInt(nx);
-            this.params.ny = parseInt(ny);
+            console.info({ base_date, base_time, nx, ny });
+            if (base_date) this.params.base_date = base_date;
+            if (base_time) this.params.base_time = base_time;
+            if (nx) this.params.nx = parseInt(nx);
+            if (ny) this.params.ny = parseInt(ny);
         }
     }
 

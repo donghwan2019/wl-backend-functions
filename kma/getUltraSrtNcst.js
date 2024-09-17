@@ -67,7 +67,7 @@ export class UltraSrtNcst extends Kma {
         });
 
         result.items = items;
-        console.log(items);
+        // console.log(items);
         return { statusCode: 200, body: result };
     }
 

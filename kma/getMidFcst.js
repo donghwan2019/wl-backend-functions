@@ -48,7 +48,7 @@ export class MidFcst extends MidFcstInfoService {
       tmFc: this.params.tmFc,
       wfSv: body.item[0].wfSv,
     };
-    console.log(result);
+    // console.log(result);
     return { statusCode: 200, body: result };
   }
 
@@ -66,5 +66,19 @@ export class MidFcst extends MidFcstInfoService {
     }
     let result = this.#parseKmaData(kmaData);
     return result;
+  }
+
+  /**
+   * check if the stnName is in the stnIdList
+   * @param {string} stnName 
+   * @returns {string}
+   */
+  getStnId(stnName) {
+    // Remove '특별시', '광역시' from the stnName if present
+    const simplifiedStnName = stnName.replace(/(특별시|광역시|특별자치도|특별자치시)/, '').trim();
+    
+    return this.stnIdList.find(stn => 
+      stn.stnName.includes(simplifiedStnName)
+    )?.stnId;
   }
 }

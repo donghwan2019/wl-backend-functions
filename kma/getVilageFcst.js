@@ -97,7 +97,7 @@ export class VilageFcst extends Kma {
         });
 
         result.items = items;
-        console.log(result);
+        // console.log(result);
         return { statusCode: 200, body: result };
     }
 
