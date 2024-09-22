@@ -1,0 +1,5 @@
+{
+  "queryStringParameters": {
+    "stnNameList": ["지정면", "보람동"]
+  }
+}

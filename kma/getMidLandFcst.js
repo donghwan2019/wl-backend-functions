@@ -1,6 +1,7 @@
 
 import moment from 'moment-timezone';
 import { MidFcstInfoService } from "./MidFcstInfoService";
+import { GangwonYeongSeo, GangwonYeongDong } from '../data/KoreaLocationInfo';
 
 /**
  * 중기육상예보조회 
@@ -22,9 +23,9 @@ export class MidLandFcst extends MidFcstInfoService {
     { regId: '11G00000', regName: '제주도' },
   ];
 
-  gangwonYeonSeo = [ "춘천", "원주", "철원", "화천", "양구", "인제", "홍천", "횡성", "평창", "영월", "정선" ];
+  gangwonYeongSeo = GangwonYeongSeo;
 
-  gangwonYeongDong = [ "강릉", "속초", "동해", "삼척", "태백", "고성", "양양"];
+  gangwonYeongDong = GangwonYeongDong;
 
   
   constructor() {
@@ -108,7 +109,7 @@ export class MidLandFcst extends MidFcstInfoService {
     if (regId === '11D10000' || regId === '11D20000') {
 
       const reg_2depth_simple = reg_2depth.slice(0, 2);
-      if (this.gangwonYeonSeo.includes(reg_2depth_simple)) {
+      if (this.gangwonYeongSeo.includes(reg_2depth_simple)) {
         regId = '11D10000';
       }
       else if (this.gangwonYeongDong.includes(reg_2depth_simple)) {

@@ -15,7 +15,7 @@ provider:
   name: aws
   runtime: nodejs20.x
   architecture: arm64
-  stage: ${opt:stage}
+  stage: ${opt:stage, 'dev'}
   region: ap-northeast-2
   memorySize: 256
   timeout: 29
@@ -68,6 +68,15 @@ functions:
     events:
       - httpApi:
           path: /${self:provider.stage}/minudustfrcstdspth/{datetime}
+          method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
+  minudustweekfrcstdspth:
+    handler: keco/handler.minudustweekfrcstdspth
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/minudustweekfrcstdspth/{datetime}
           method: get
     environment:
       DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}

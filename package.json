@@ -46,6 +46,7 @@
     "@babel/cli": "^7.19.3",
     "@babel/core": "^7.20.2",
     "@babel/preset-env": "^7.20.2",
+    "aws-sdk": "^2.1691.0",
     "babel-loader": "^9.1.0",
     "csv-loader": "^3.0.5",
     "serverless-dotenv-plugin": "^4.0.2",

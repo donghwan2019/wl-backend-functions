@@ -23,6 +23,7 @@ export class TodayWeather {
     await this.#_parseEvent(event);
 
     try {
+      //todo: midLandFcst, midTa 모두 regIdForTa 값으로 받아오고 있음. 오류 확인 필요
       let [vilageFcstData, ultraSrtNcstData, ultraSrtFcstData, midFcstData, midLandFcstData, midTaData] =
         await Promise.all([
           this.vilageFcst.get({queryStringParameters: this.params}),
