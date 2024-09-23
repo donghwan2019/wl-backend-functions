@@ -6,7 +6,12 @@ import { MidLandFcst } from "../kma/getMidLandFcst.js";
 import { MidTa } from "../kma/getMidTa.js";
 import { KakaoApi } from "../geo/getKakaoApi.js";
 
-import moment from "moment-timezone";
+import { MsrstnList } from "../keco/getMsrstnList.js";
+import { CtprvnRltmMesureDnsty } from "../keco/getCtprvnRltmMesureDnsty.js";
+import { MinuDustFrcstDspth } from "../keco/getMinuDustFrcstDspth.js";
+import { MinuDustWeekFrcstDspth } from "../keco/getMinuDustWeekFrcstDspth.js";
+
+import moment, { min } from "moment-timezone";
 
 export class TodayWeather {
   constructor() {
@@ -16,6 +21,10 @@ export class TodayWeather {
     this.midFcst = new MidFcst();
     this.midLandFcst = new MidLandFcst();
     this.midTa = new MidTa();
+    this.ctpvrvnRltm = new CtprvnRltmMesureDnsty();
+    this.msrStnList = new MsrstnList();
+    this.minuDustFrcstDspth = new MinuDustFrcstDspth();
+    this.minuDustWeekFrcstDspth = new MinuDustWeekFrcstDspth();
     this.params = {};
   }
 
@@ -24,7 +33,9 @@ export class TodayWeather {
 
     try {
       //todo: midLandFcst, midTa 모두 regIdForTa 값으로 받아오고 있음. 오류 확인 필요
-      let [vilageFcstData, ultraSrtNcstData, ultraSrtFcstData, midFcstData, midLandFcstData, midTaData] =
+      let [vilageFcstData, ultraSrtNcstData, ultraSrtFcstData, 
+        midFcstData, midLandFcstData, midTaData, 
+        ctprvnRltmData, minuDustFrcstDspthData, minuDustWeekFrcstDspthData] =
         await Promise.all([
           this.vilageFcst.get({queryStringParameters: this.params}),
           this.ultraSrtNcst.get({queryStringParameters: this.params}),
@@ -32,6 +43,9 @@ export class TodayWeather {
           this.midFcst.get({queryStringParameters: this.params}),
           this.midLandFcst.get({queryStringParameters: this.params}),
           this.midTa.get({queryStringParameters: this.params}),
+          this.ctpvrvnRltm.getByStations(this.params.stationList),
+          this.minuDustFrcstDspth.getByLocation(this.params.region_1depth_name, this.params.region_2depth_name),
+          this.minuDustWeekFrcstDspth.getByLocation(this.params.region_1depth_name, this.params.region_2depth_name)
         ]);
 
       if (vilageFcstData.statusCode !== 200) {
@@ -50,7 +64,10 @@ export class TodayWeather {
         ultraSrtFcstData,
         midFcstData,
         midLandFcstData,
-        midTaData
+        midTaData,
+        ctprvnRltmData,
+        minuDustFrcstDspthData,
+        minuDustWeekFrcstDspthData
       );
       console.log(result);
       // return { statusCode: 200, body: JSON.stringify(result) };
@@ -168,12 +185,20 @@ export class TodayWeather {
     }
     this.params.regIdForTa = regIdForTa;
 
+    let stationList = await this.msrStnList.getNearStnList(this.params.lon, this.params.lat);
+
     this.params.nx = nx;
     this.params.ny = ny;
+    this.params.region_1depth_name = regionList[0].region_1depth_name;
+    this.params.region_2depth_name = regionList[0].region_2depth_name;
+    this.params.stationList = stationList.map(item => item.stationName);
+
     console.log(this.params);
   }
 
-  #_combineData(vilageFcstData, ultraSrtNcstData, ultraSrtFcstData, midFcstData, midLandFcstData, midTaData) {
+  #_combineData(vilageFcstData, ultraSrtNcstData, ultraSrtFcstData, 
+                midFcstData, midLandFcstData, midTaData,
+                ctprvnRltmData, minuDustFrcstDspthData, minuDustWeekFrcstDspthData) {
     let now = moment().tz("Asia/Seoul");
     let result = {
       baseDateTime: now.format("YYYY-MM-DD HH:mm:ss"),
@@ -185,6 +210,9 @@ export class TodayWeather {
       midFcst: midFcstData.body,
       midLandFcst: midLandFcstData.body,
       midTa: midTaData.body,
+      ctprvnRltmData: ctprvnRltmData.body,
+      minuDustFrcstDspth: minuDustFrcstDspthData.body,
+      minuDustWeekFrcstDspth: minuDustWeekFrcstDspthData.body
     };
     return result;
   }

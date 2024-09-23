@@ -138,7 +138,7 @@ export class KmaScraper {
             const strContents = iconv.decode(body, 'euc-kr').toString();
             let $ = cheerio.load(strContents);
 
-            result.body = JSON.stringify(this.#parseASOS($));
+            result.body = this.#parseASOS($);
         }
         catch(e) {
             console.error(e);
@@ -146,6 +146,7 @@ export class KmaScraper {
             result.body = 'Fail to parse ASOS data.';
         }
 
+        // console.log(`result: ${JSON.stringify(result, null, 2)}`);
         return result;
     }
 }
