@@ -1,7 +1,12 @@
 import axios from 'axios';
+import moment from "moment-timezone";
 
-export class Kma {
+import { ControllerS3 } from "../aws/controllerS3.js";
+
+export class Kma extends ControllerS3 {
     constructor() {
+        super();
+        let now = moment().tz('Asia/Seoul');
         this.domain = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0";
         this.path = "";
         this.params = {
@@ -9,8 +14,8 @@ export class Kma {
             pageNo: 1,
             numOfRows : 9999,
             dataType : 'json',
-            base_date : new Date().toISOString().slice(0, 10).replace(/-/g, ''),
-            base_time : new Date().getHours() + '00',
+            base_date : now.format('YYYYMMDD'),
+            base_time : now.format('HH00'),
             nx : -1,    //60 서울특별시
             ny : -1,    //127 서울특별시
         };

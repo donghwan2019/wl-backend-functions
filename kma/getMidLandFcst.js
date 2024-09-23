@@ -32,6 +32,8 @@ export class MidLandFcst extends MidFcstInfoService {
     super();
     this.path = '/getMidLandFcst'; 
     this.params.regId = '11B00000'; //서울,인천,경기도
+    this.data;
+    this.key = `kma/${this.params.tmFc}_${this.params.regId}_midLandFcst`;
   }
 
   #transformData(source, baseDate) {
@@ -47,8 +49,8 @@ export class MidLandFcst extends MidFcstInfoService {
       if (source[`rnSt${day}Am`] !== undefined) {
         dayData.rnStAm = source[`rnSt${day}Am`];
         dayData.rnStPm = source[`rnSt${day}Pm`];
-        dayData.wfAm = source[`wfAm${day}`];
-        dayData.wfPm = source[`wfPm${day}`];
+        dayData.wfAm = source[`wf${day}Am`];
+        dayData.wfPm = source[`wf${day}Pm`];
       }
       else {
         dayData.rnStAm = source[`rnSt${day}`];
@@ -69,14 +71,14 @@ export class MidLandFcst extends MidFcstInfoService {
 
     let item = kmaData.body.items.item[0];
     delete item.regId;
-    let result = {
+    let result = [{
       regId: this.params.regId,
       baseDate : moment(this.params.tmFc, 'YYYYMMDDHHmm', "Asia/Seoul").toDate(),
       tmFc: this.params.tmFc,
-    };
+    }];
     let baseDate = moment(this.params.tmFc, 'YYYYMMDD', "Asia/Seoul").toDate();
     let data = this.#transformData(item, baseDate);
-    result.data = data;
+    result[0].data = data;
 
     // console.info(result);
     return { statusCode: 200, body: result };
@@ -89,12 +91,28 @@ export class MidLandFcst extends MidFcstInfoService {
     catch (error) {
       return { statusCode: 400, body: error.message };
     }
+    
+    if (this.data) {
+      console.info(`load from memory: ${this.key}`);
+      return { statusCode: 200, body: this.data };
+    }
+    else {
+      this.data = await this._loadFromS3(this.key);
+      if (this.data) {
+        console.info(`load from S3: ${this.key}`);
+        return { statusCode: 200, body: this.data };
+      }
+    }
 
     const kmaData = await this.getKmaData();
     if (kmaData == undefined || kmaData == null) {
       return { statusCode: 500, body: 'Fail to get KMA MidLandFcstInfoService data.' };
     }
     let result = this.#parseKmaData(kmaData);
+    await this._saveToS3(this.key, result.body);
+    console.info(`save to S3: ${this.key}`);
+    this.data = result.body;
+
     return result;
   }
 

@@ -18,6 +18,8 @@ export class UltraSrtFcst extends Kma {
             now.subtract(1, 'hours');
             this.params.base_time = now.format('HH') + '30';
         }
+        this.data;
+        this.key = `kma/${this.params.base_date}${this.params.base_time}_${this.params.nx}_${this.params.ny}_ultraSrtFcst`;
     }
 
     async #getKmaData() {
@@ -38,12 +40,12 @@ export class UltraSrtFcst extends Kma {
             return { statusCode: statusCode, body: body };
         }
 
-        let result = {
+        let result = [{
             nx: this.params.nx,
             ny: this.params.ny,
             baseDate: moment(this.params.base_date + this.params.base_time, 'YYYYMMDDHHmm', "Asia/Seoul").toDate(),
             baseDateTimeStr: this.params.base_date + this.params.base_time,
-        };
+        }];
 
         let items = [];
 
@@ -65,7 +67,7 @@ export class UltraSrtFcst extends Kma {
             }
         });
 
-        result.items = items;
+        result[0].items = items;
         // console.log(result);
         return { statusCode: 200, body: result };
     }
@@ -82,9 +84,24 @@ export class UltraSrtFcst extends Kma {
     async get(event) {
         try {
             this.#parseEvent(event);
+            if (this.params.nx === -1) this.params.nx = 60;
+            if (this.params.ny === -1) this.params.ny = 127;
+            this.key = `kma/${this.params.base_date}${this.params.base_time}_${this.params.nx}_${this.params.ny}_ultraSrtFcst`;
         } 
         catch (error) {
             return { statusCode: 400, body: error.message };
+        }
+
+        if (this.data) {
+            console.info(`load from memory: ${this.key}`);
+            return { statusCode: 200, body: this.data };
+        }
+        else {
+            this.data = await this._loadFromS3(this.key);
+            if (this.data) {
+                console.info(`load from S3: ${this.key}`);
+                return { statusCode: 200, body: this.data };
+            }
         }
 
         const kmaData = await this.#getKmaData();
@@ -93,7 +110,10 @@ export class UltraSrtFcst extends Kma {
         }
 
         let result = this.#parseKmaData(kmaData);
-        // result.body = JSON.stringify(result.body, null, 2);
+        await this._saveToS3(this.key, result.body);
+        console.info(`save to S3: ${this.key}`);
+        this.data = result.body;
+
         return result;
     }
 }

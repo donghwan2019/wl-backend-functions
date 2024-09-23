@@ -25,6 +25,8 @@ export class MidFcst extends MidFcstInfoService {
     super();
     this.path = "/getMidFcst";
     this.params.stnId = '108'; // 전국
+    this.key = `kma/${this.params.tmFc}_${this.params.stnId}_midFcst`;
+    this.data;
   }
 
   /**
@@ -42,12 +44,12 @@ export class MidFcst extends MidFcstInfoService {
     }
     // console.log(body);
 
-    let result = {
+    let result = [{
       stnId: this.params.stnId,
       fcstDate : moment(this.params.tmFc, 'YYYYMMDDHHmm', "Asia/Seoul").toDate(),
       tmFc: this.params.tmFc,
       wfSv: body.item[0].wfSv,
-    };
+    }];
     // console.log(result);
     return { statusCode: 200, body: result };
   }
@@ -59,12 +61,26 @@ export class MidFcst extends MidFcstInfoService {
     catch (error) {
       return { statusCode: 400, body: error.message };
     }
-
+    if (this.data) {
+      console.info(`load from memory: ${this.key}`);
+      return { statusCode: 200, body: this.data };
+    }
+    else {
+      this.data = await this._loadFromS3(this.key);
+      if (this.data) {
+        console.info(`load from S3: ${this.key}`);
+        return { statusCode: 200, body: this.data };
+      }
+    }
     const kmaData = await this.getKmaData();
     if (kmaData == undefined || kmaData == null) {
       return { statusCode: 500, body: 'Fail to get KMA MidFcstInfoService data.' };
     }
     let result = this.#parseKmaData(kmaData);
+    console.info(`get from KMA: ${this.key}`);
+
+    await this._saveToS3(this.key, result.body);
+    this.data = result.body;
     return result;
   }
 
