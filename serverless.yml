@@ -42,8 +42,13 @@ functions:
       - httpApi:
           path: /${self:provider.stage}/asosmin/{datetime}
           method: get
-    environment:
-      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
+  cityweather:
+    handler: kma-scraper/handler.cityweather
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/cityweather
+          method: get
 
   msrstnlist:
     handler: keco/handler.msrstnList
