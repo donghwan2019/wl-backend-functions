@@ -50,6 +50,13 @@ functions:
           path: /${self:provider.stage}/cityweather
           method: get
 
+  nearStnList:
+    handler: kma-scraper/handler.nearStnList
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/nearstnlist
+          method: get
+
   msrstnlist:
     handler: keco/handler.msrstnList
     events:

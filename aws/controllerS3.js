@@ -71,4 +71,25 @@ export class ControllerS3 {
     const data = await athena.startQueryExecution(params).promise();
     return data;
   }
+
+  async _latestS3Object(prefix) {
+    console.log(`prefix: ${prefix}`);
+    const list = await this.s3.listObjectsV2({
+      Bucket: this.bucket,
+      Prefix: prefix,
+    }).promise();
+
+    if (list.Contents.length === 0) {
+      console.log('there is no data in s3');
+      return null;
+    }
+
+    const latestFile = list.Contents.reduce((latest, current) => {
+      return latest.LastModified > current.LastModified ? latest : current;
+    });
+
+    console.log(`latestFile: ${JSON.stringify(latestFile, null, 2)}`);
+
+    return latestFile.Key;
+  }
 }

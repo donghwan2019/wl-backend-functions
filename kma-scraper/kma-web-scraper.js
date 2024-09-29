@@ -8,6 +8,7 @@ import iconv from 'iconv-lite';
 import moment from 'moment-timezone';
 
 import { ControllerS3 } from "../aws/controllerS3.js";
+import { KakaoApi } from "../geo/getKakaoApi.js";
 
 export class KmaScraper extends ControllerS3 {
     
@@ -18,6 +19,8 @@ export class KmaScraper extends ControllerS3 {
         this.cityWeatherKey;
         this.asosList;
         this.asosKey;
+        this.stnInfoList;
+        this.stnInfoKey;
     }
 
     /**
@@ -408,5 +411,151 @@ export class KmaScraper extends ControllerS3 {
         }
 
         return result;
+    }
+
+    async getASOSbyStnList(datetime, stnId) {
+    }
+
+    //get city weather by city name or near geocoordinate
+    async getCityWeatherByCityName(datetime, cityName) {
+    }
+
+    async #makeStnInfoList() {
+      console.log('makeStnInfoList');
+
+      const now = moment().tz('Asia/Seoul');
+      this.stnInfoKey = `kma-scraper/stnInfo/${now.format('YYYYMM')}`;
+      if (this.stnInfoList) {
+        return this.stnInfoList;
+      }
+      else {
+        const scrapData = await this._loadFromS3(this.stnInfoKey);
+        if (scrapData) {
+          this.stnInfoList = scrapData;
+          return this.stnInfoList;
+        }
+      }
+
+      let latestAsosList;
+      if (this.asosList) {
+        latestAsosList = this.asosList;
+      }
+      else {
+        let lastestAsosKey = await this._latestS3Object('kma-scraper/asos/'+now.format('YYYYMM'));
+        if (lastestAsosKey) {
+          lastestAsosKey = lastestAsosKey.replace('.ndjson', '');
+          latestAsosList = await this._loadFromS3(lastestAsosKey);
+          this.asosList = latestAsosList;
+        }
+      }
+
+      if (!latestAsosList) {
+        console.info('There is no ASOS data in S3.');
+        this.getASOS();
+        latestAsosList = this.asosList;
+      }
+
+      console.log(`latestAsosList: ${JSON.stringify(latestAsosList[0], null, 2)}`);
+
+      let latestCityWeatherList;
+      if (this.cityWeatherList) {
+        latestCityWeatherList = this.cityWeatherList;
+      }
+      else {
+        let latestCityWeatherKey = await this._latestS3Object('kma-scraper/cityWeather/'+now.format('YYYY.MM'));
+        if (latestCityWeatherKey) {
+          latestCityWeatherKey = latestCityWeatherKey.replace('.ndjson', '');
+          latestCityWeatherList = await this._loadFromS3(latestCityWeatherKey);
+          this.cityWeatherList = latestCityWeatherList;
+        }
+      }
+      if (!latestCityWeatherList) {
+        console.info('There is no city weather data in S3.');
+        this.getCityWeather();
+        latestCityWeatherList = this.cityWeatherList;
+      }
+      console.log(`latestCityWeatherList: ${JSON.stringify(latestCityWeatherList[0], null, 2)}`);
+
+      //mark asos is city weather stn in asosList
+      for (let i = 0; i < latestAsosList.length; i++) {
+        for (let j = 0; j < latestCityWeatherList.length; j++) {
+          if (latestAsosList[i].stnId === latestCityWeatherList[j].stnId) {
+            latestAsosList[i].isCityWeather = true;
+            break;
+          }
+        }
+        if (!latestAsosList[i].isCityWeather) {
+          latestAsosList[i].isCityWeather = false;
+        }
+      }
+
+      let kakaoApi = new KakaoApi();
+      // await Promise.all(latestAsosList.map(async (asos) => {
+      //   asos.geoInfo = await kakaoApi.byAddress(asos.addr);
+      // }));
+      for (const asos of latestAsosList) {
+        asos.geoInfo = await kakaoApi.byAddress(asos.addr);
+        //sleep 100ms
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      console.log(`latestAsosList: ${JSON.stringify(latestAsosList[0], null, 2)}`);
+      //stnId, stnName, isCityWeather, addr, region_1depth_name, region_2depth_name, region_3depth_name, x, y
+      let optAsosList = latestAsosList.map(asos => {
+        return {
+          stnId: asos.stnId,
+          stnName: asos.stnName,
+          isCityWeather: asos.isCityWeather,
+          addr: asos.addr,
+          region_1depth_name: asos.geoInfo[0].address.region_1depth_name,
+          region_2depth_name: asos.geoInfo[0].address.region_2depth_name,
+          region_3depth_name: asos.geoInfo[0].address.region_3depth_name,
+          x: asos.geoInfo[0].x,
+          y: asos.geoInfo[0].y
+        }
+      });
+
+      this.stnInfoList = optAsosList;
+      await this._saveToS3(this.stnInfoKey, this.stnInfoList);
+      return this.stnInfoList;
+    }
+
+    async #getStnInfoList() {
+      const now = moment().tz('Asia/Seoul');
+      this.stnInfoKey = `kma-scraper/stnInfo/${now.format('YYYYMM')}`;
+      const scrapData = await this._loadFromS3(this.stnInfoKey);
+      if (scrapData) {
+        this.stnInfoList = scrapData;
+        console.log(`load from S3: length: ${this.stnInfoList.length}, key: ${this.stnInfoKey}`);
+        return this.stnInfoList;
+      }
+      return null;
+    }
+
+    /**
+     * get stninfo near geocoordinate
+     * @param {object} locInfo 
+     * @param {number} locInfo.lat
+     * @param {number} locInfo.lon
+     * @param {string} locInfo.reg_1depth_name
+     * @param {string} locInfo.reg_2depth_name
+     * @returns 
+     */
+    async getNearStnList(locInfo) {
+      let nearStnList = null;
+
+      if (!this.stnInfoList) {
+        this.stnInfoList = await this.#getStnInfoList();
+        if (!this.stnInfoList) {
+          await this.#makeStnInfoList();
+          this.stnInfoList = await this.#getStnInfoList();
+        }
+      }
+      //가장 city weather stnd과 가장 가까운 asos stnd를 추출하여 전달
+      console.log(`this.stnInfoList: ${JSON.stringify(this.stnInfoList[0], null, 2)}`);
+      //figure out the nearest stn from locInfo
+      //first isCityWeather is true
+      //second is the nearest distance
+
+      return nearStnList;
     }
 }

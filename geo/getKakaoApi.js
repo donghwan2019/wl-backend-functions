@@ -45,7 +45,11 @@ export class KakaoApi {
           headers: {
             Authorization: `KakaoAK ${this.api_key}`
           },
+        }).catch(error => {
+          console.error(error);
+          throw new Error(error.message);
         });
+
         if (data?.documents.length === 0) {
           console.error("No data found");
           throw new Error("No data found");

@@ -16,3 +16,8 @@ module.exports.cityweather = async (event) => {
     let kmaScraper = new KmaScraper();
     return await kmaScraper.getCityWeather();
 };
+
+module.exports.nearStnList = async (event) => {
+    let kmaScraper = new KmaScraper();
+    return await kmaScraper.getNearStnList();
+};
