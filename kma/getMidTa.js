@@ -1,6 +1,6 @@
 
 import moment from "moment-timezone";
-import { MidFcstInfoService } from "./MidFcstInfoService";
+import { MidFcstInfoService } from "./MidFcstInfoService.js";
 
 import regCodeList from '../data/MidFcstInfoService_regCode.csv';
 

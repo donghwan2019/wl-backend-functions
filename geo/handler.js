@@ -1,7 +1,6 @@
+import { KakaoApi } from "./getKakaoApi.js";
 
-const { KakaoApi } = require("./getKakaoApi");
-
-module.exports.getInfo = async (event) => {
+export const getInfo = async (event) => {
   console.log(`invoked with event: ${JSON.stringify(event)}`);
 
   let kakaoApi = new KakaoApi();

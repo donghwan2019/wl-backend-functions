@@ -105,8 +105,4 @@ dist
 
 .webpack/
 
-yarn.lock
-
-package-lock.json
-
 .env*

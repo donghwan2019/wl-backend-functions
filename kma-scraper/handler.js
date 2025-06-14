@@ -1,23 +1,21 @@
-const { KmaScraper } = require("./kma-web-scraper");
-
-// import KmaScraper from './kma-web-scraper.js';
+import { KmaScraper } from "./kma-web-scraper.js";
 
 /**
  * 
  * @param {*} event 
  * @returns 
  */
-module.exports.asosminweather = async (event) => {
+export const asosminweather = async (event) => {
     let kmaScraper = new KmaScraper();
     return await kmaScraper.getASOS();
 };
 
-module.exports.cityweather = async (event) => {
+export const cityweather = async (event) => {
     let kmaScraper = new KmaScraper();
     return await kmaScraper.getCityWeather();
 };
 
-module.exports.nearStnList = async (event) => {
+export const nearStnList = async (event) => {
     let kmaScraper = new KmaScraper();
     return await kmaScraper.getNearStnList();
 };

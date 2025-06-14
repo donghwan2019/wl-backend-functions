@@ -1,5 +1,4 @@
-
-const AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 export class ControllerS3 {
   constructor() {

@@ -1,15 +1,14 @@
-
-const { CtprvnRltmMesureDnsty } = require('./getCtprvnRltmMesureDnsty.js');
-const { MsrstnList } = require('./getMsrstnList.js');
-const { MinuDustFrcstDspth } = require('./getMinuDustFrcstDspth.js');
-const { MinuDustWeekFrcstDspth } = require('./getMinuDustWeekFrcstDspth.js');
+import { CtprvnRltmMesureDnsty } from './getCtprvnRltmMesureDnsty.js';
+import { MsrstnList } from './getMsrstnList.js';
+import { MinuDustFrcstDspth } from './getMinuDustFrcstDspth.js';
+import { MinuDustWeekFrcstDspth } from './getMinuDustWeekFrcstDspth.js';
 
 /**
  * 하루에 한번 업데이트
  * @param {*} event 
  * @returns 
  */
-module.exports.msrstnList = async (event) => {
+export const msrstnList = async (event) => {
     let msrstnList = new MsrstnList();
     const { queryStringParameters } = event;
     if (queryStringParameters === undefined || queryStringParameters === null) {
@@ -26,7 +25,7 @@ module.exports.msrstnList = async (event) => {
  * @param {*} event 
  * @returns 
  */
-module.exports.ctprvnrltmmesurednsty = async (event) => {
+export const ctprvnrltmmesurednsty = async (event) => {
     let ctprvnrltmmesureddnsty = new CtprvnRltmMesureDnsty();
     const { queryStringParameters } = event;
     if (queryStringParameters === undefined || queryStringParameters === null) {
@@ -43,7 +42,7 @@ module.exports.ctprvnrltmmesurednsty = async (event) => {
  * @param {*} event 
  * @returns 
  */
-module.exports.minudustfrcstdspth = async (event) => {
+export const minudustfrcstdspth = async (event) => {
     let minudustfrcstdspth = new MinuDustFrcstDspth();
     const { queryStringParameters } = event;
     if (queryStringParameters === undefined || queryStringParameters === null) {
@@ -56,7 +55,7 @@ module.exports.minudustfrcstdspth = async (event) => {
     }
 };
 
-module.exports.minudustweekfrcstdspth = async (event) => {
+export const minudustweekfrcstdspth = async (event) => {
     let minudustweekfrcstdspth = new MinuDustWeekFrcstDspth();
     const { queryStringParameters } = event;
     if (queryStringParameters === undefined || queryStringParameters === null) {

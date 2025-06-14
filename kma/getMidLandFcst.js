@@ -1,7 +1,7 @@
 
 import moment from 'moment-timezone';
-import { MidFcstInfoService } from "./MidFcstInfoService";
-import { GangwonYeongSeo, GangwonYeongDong } from '../data/KoreaLocationInfo';
+import { MidFcstInfoService } from "./MidFcstInfoService.js";
+import { GangwonYeongSeo, GangwonYeongDong } from '../data/KoreaLocationInfo.js';
 
 /**
  * 중기육상예보조회 

@@ -1,6 +1,6 @@
 
 import moment from "moment-timezone";
-import { MidFcstInfoService } from "./MidFcstInfoService";
+import { MidFcstInfoService } from "./MidFcstInfoService.js";
 
 /**
  * 중기전망조회

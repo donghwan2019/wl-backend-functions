@@ -1,11 +1,11 @@
-const { TodayWeather } = require('./getTodayWeather.js');
+import { TodayWeather } from './getTodayWeather.js';
 
 /**
  * Handler for today's weather
  * @param {*} event 
  * @returns 
  */
-module.exports.todayweather = async (event) => {
+export const todayweather = async (event) => {
     let todayWeather = new TodayWeather();
     return await todayWeather.get(event);
 };

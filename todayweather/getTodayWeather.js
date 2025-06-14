@@ -28,6 +28,14 @@ export class TodayWeather {
     this.params = {};
   }
 
+  /**
+   * 
+   * @param {object} event 
+   * @param {object} event.queryStringParameters
+   * @param {string} [event.queryStringParameters.lat]
+   * @param {string} [event.queryStringParameters.lon]
+   * @param {string} [event.queryStringParameters.address]
+   */
   async get(event) {
     await this.#_parseEvent(event);
 
@@ -120,6 +128,14 @@ export class TodayWeather {
     return { nx, ny };
   }
 
+  /**
+   * 
+   * @param {object} event 
+   * @param {object} event.queryStringParameters
+   * @param {string} [event.queryStringParameters.lat]
+   * @param {string} [event.queryStringParameters.lon]
+   * @param {string} [event.queryStringParameters.address]
+   */
   async #_parseEvent(event) {
     if (event.queryStringParameters) {
       this.params = { ...event.queryStringParameters };

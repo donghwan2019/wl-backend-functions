@@ -3,7 +3,7 @@
  */
 
 import moment from "moment-timezone";
-import { Kma } from "./getKma";
+import { Kma } from "./getKma.js";
 
 /**
  * 기상청 중기예보 조회 서비스
