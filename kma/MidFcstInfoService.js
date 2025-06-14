@@ -3,7 +3,7 @@
  */
 
 import moment from "moment-timezone";
-import { Kma } from "./getKma";
+import { Kma } from "./getKma.js";
 
 /**
  * 기상청 중기예보 조회 서비스
@@ -45,11 +45,13 @@ export class MidFcstInfoService extends Kma {
       console.info('queryStringParameters is null.');
     }
     else {
-      const { stnId, regId, tmFc } = queryStringParameters;
+      const { stnId, regId, tmFc, regIdForTa } = queryStringParameters;
       if (stnId !== undefined)
         this.params.stnId = stnId;
-      if (regId !== undefined)
+      if (regId !== undefined)      //it's for midLandFcst
         this.params.regId = regId;
+      if (regIdForTa !== undefined) //it's for midTa
+        this.params.regId = regIdForTa;
       if (tmFc !== undefined)
         this.params.tmFc = tmFc;
     }

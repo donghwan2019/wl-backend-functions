@@ -15,7 +15,7 @@ provider:
   name: aws
   runtime: nodejs20.x
   architecture: arm64
-  stage: ${opt:stage}
+  stage: ${opt:stage, 'dev'}
   region: ap-northeast-2
   memorySize: 256
   timeout: 29
@@ -42,8 +42,20 @@ functions:
       - httpApi:
           path: /${self:provider.stage}/asosmin/{datetime}
           method: get
-    environment:
-      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
+  cityweather:
+    handler: kma-scraper/handler.cityweather
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/cityweather
+          method: get
+
+  nearStnList:
+    handler: kma-scraper/handler.nearStnList
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/nearstnlist
+          method: get
 
   msrstnlist:
     handler: keco/handler.msrstnList
@@ -68,6 +80,15 @@ functions:
     events:
       - httpApi:
           path: /${self:provider.stage}/minudustfrcstdspth/{datetime}
+          method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
+  minudustweekfrcstdspth:
+    handler: keco/handler.minudustweekfrcstdspth
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/minudustweekfrcstdspth/{datetime}
           method: get
     environment:
       DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
@@ -134,6 +155,24 @@ functions:
           method: get
     environment:
       DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
+  todayweather:
+    handler: todayweather/handler.todayweather
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/todayweather
+          method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
+  geo:
+    handler: geo/handler.getInfo
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/geo
+          method: get
+    environment:
+      DAUM_API_KEY: ${env:DAUM_API_KEY}
 
 resources:  
   Resources:  

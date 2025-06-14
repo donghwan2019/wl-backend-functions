@@ -1,16 +1,17 @@
-const { VilageFcst } = require('./getVilageFcst');
-const { UltraSrtFcst } = require('./getUltraSrtFcst');
-const { UltraSrtNcst } = require('./getUltraSrtNcst');
-const { MidFcst } = require('./getMidFcst');
-const { MidLandFcst } = require('./getMidLandFcst');
-const { MidTa } = require('./getMidTa');
-const { MidSeaFcst } = require('./getMidSeaFcst');
+import { VilageFcst } from './getVilageFcst.js';
+import { UltraSrtFcst } from './getUltraSrtFcst.js';
+import { UltraSrtNcst } from './getUltraSrtNcst.js';
+import { MidFcst } from './getMidFcst.js';
+import { MidLandFcst } from './getMidLandFcst.js';
+import { MidTa } from './getMidTa.js';
+import { MidSeaFcst } from './getMidSeaFcst.js';
+
 /**
  * 
  * @param {object} event 
  * @returns 
  */
-module.exports.vilagefcst = async (event) => {
+export const vilagefcst = async (event) => {
     let vilageFcst = new VilageFcst();
     return await vilageFcst.get(event);
 }
@@ -20,7 +21,7 @@ module.exports.vilagefcst = async (event) => {
  * @param {object} event 
  * @returns 
  */
-module.exports.ultrasrtfcst = async (event) => {
+export const ultrasrtfcst = async (event) => {
     let ultraSrtFcst = new UltraSrtFcst();
     return await ultraSrtFcst.get(event);
 }
@@ -29,27 +30,27 @@ module.exports.ultrasrtfcst = async (event) => {
  * @param {object} event
  * @returns
  */
-module.exports.ultrasrtncst = async (event) => {
+export const ultrasrtncst = async (event) => {
     let ultraSrtNcst = new UltraSrtNcst();
     return await ultraSrtNcst.get(event);
 }
 
-module.exports.midfcst = async (event) => {
+export const midfcst = async (event) => {
     let midFcst = new MidFcst();
     return await midFcst.get(event);
 }
 
-module.exports.midlandfcst = async (event) => {
+export const midlandfcst = async (event) => {
     let midLandFcst = new MidLandFcst();
     return await midLandFcst.get(event);
 }
 
-module.exports.midta = async (event) => {
+export const midta = async (event) => {
     let midTa = new MidTa();
     return await midTa.get(event);
 }
 
-module.exports.midseafcst = async (event) => {
+export const midseafcst = async (event) => {
     let midSeaFcst = new MidSeaFcst();
     return await midSeaFcst.get(event);
 }

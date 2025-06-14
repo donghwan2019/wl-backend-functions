@@ -1,34 +1,69 @@
-
-const { CtprvnRltmMesureDnsty } = require('./getCtprvnRltmMesureDnsty.js');
-const { MsrstnList } = require('./getMsrstnList.js');
-const { MinuDustFrcstDspth } = require('./getMinuDustFrcstDspth.js');
+import { CtprvnRltmMesureDnsty } from './getCtprvnRltmMesureDnsty.js';
+import { MsrstnList } from './getMsrstnList.js';
+import { MinuDustFrcstDspth } from './getMinuDustFrcstDspth.js';
+import { MinuDustWeekFrcstDspth } from './getMinuDustWeekFrcstDspth.js';
 
 /**
  * 하루에 한번 업데이트
  * @param {*} event 
  * @returns 
  */
-module.exports.msrstnList = async (event) => {
+export const msrstnList = async (event) => {
     let msrstnList = new MsrstnList();
-    return await msrstnList.get();
+    const { queryStringParameters } = event;
+    if (queryStringParameters === undefined || queryStringParameters === null) {
+        console.info('queryStringParameters is null.');
+        return await msrstnList.get();
+    }
+    else {
+        console.info(`queryStringParameters: ${JSON.stringify(queryStringParameters)}`);
+        return await msrstnList.getNearStnList(queryStringParameters.lon, queryStringParameters.lat);
+    }
 };
 
 /**
- * 20분전까지 5분간 캐시하고, 이후는 완성된 데이터로 보고 1달간 캐시 
  * @param {*} event 
  * @returns 
  */
-module.exports.ctprvnrltmmesurednsty = async (event) => {
+export const ctprvnrltmmesurednsty = async (event) => {
     let ctprvnrltmmesureddnsty = new CtprvnRltmMesureDnsty();
-    return await ctprvnrltmmesureddnsty.get();
+    const { queryStringParameters } = event;
+    if (queryStringParameters === undefined || queryStringParameters === null) {
+        console.info('queryStringParameters is null.');
+        return await ctprvnrltmmesureddnsty.get();
+    }
+    else {
+        console.info(`queryStringParameters: ${JSON.stringify(queryStringParameters)}`);
+        return await ctprvnrltmmesureddnsty.getByStations(queryStringParameters.stnNameList);
+    }
 };
 
 /**
- * 20분전까지 5분간 캐시하고, 이후는 완성된 데이터로 보고 1달간 캐시
  * @param {*} event 
  * @returns 
  */
-module.exports.minudustfrcstdspth = async (event) => {
+export const minudustfrcstdspth = async (event) => {
     let minudustfrcstdspth = new MinuDustFrcstDspth();
-    return await minudustfrcstdspth.get();
+    const { queryStringParameters } = event;
+    if (queryStringParameters === undefined || queryStringParameters === null) {
+        console.info('queryStringParameters is null.');
+        return await minudustfrcstdspth.get();
+    }
+    else {
+        console.info(`queryStringParameters: ${JSON.stringify(queryStringParameters)}`);
+        return await minudustfrcstdspth.getByLocation(queryStringParameters.region_1depth_name, queryStringParameters.region_2depth_name);
+    }
+};
+
+export const minudustweekfrcstdspth = async (event) => {
+    let minudustweekfrcstdspth = new MinuDustWeekFrcstDspth();
+    const { queryStringParameters } = event;
+    if (queryStringParameters === undefined || queryStringParameters === null) {
+        console.info('queryStringParameters is null.');
+        return await minudustweekfrcstdspth.get();
+    }
+    else {
+        console.info(`queryStringParameters: ${JSON.stringify(queryStringParameters)}`);
+        return await minudustweekfrcstdspth.getByLocation(queryStringParameters.region_1depth_name, queryStringParameters.region_2depth_name);
+    }
 };

@@ -1,3 +1,5 @@
+import moment from "moment-timezone";
+
 import { Keco } from "./getKeco.js";
 
 /**
@@ -11,6 +13,15 @@ export class CtprvnRltmMesureDnsty extends Keco {
         
         //sidoName - (전국, 서울, 부산, 대구, 인천, 광주, 대전, 울산, 경기, 강원, 충북, 충남, 전북, 전남, 경북, 경남, 제주, 세종)
         this.params.sidoName = '전국';
+        this.ctprvnRltmMesureDnsty;
+
+        //if before 16 mins base_time, get data from before 1 hour
+        let now = moment().tz('Asia/Seoul');
+        if (now.minute() < 16) {
+            this.params.base_time = now.subtract(1, 'hour').format('HH00');
+        }
+
+        this.key = `keco/${this.params.base_date+this.params.base_time}_ctprvnRltmMesureDnsty`;
     }
 
     async #getKecoData() {
@@ -39,15 +50,59 @@ export class CtprvnRltmMesureDnsty extends Keco {
      * @returns {object} result
      */
     async get() {
-        const kecoData = await this.#getKecoData();
+        let kecoData;
+        if (this.ctprvnRltmMesureDnsty !== undefined) {
+            return { statusCode: 200, body: this.ctprvnRltmMesureDnsty };
+        }
+        else {
+            kecoData = await this._loadFromS3(this.key);
+            if (kecoData) {
+                this.ctprvnRltmMesureDnsty = kecoData;
+                return { statusCode: 200, body: kecoData };
+            }
+        }
+
+        kecoData = await this.#getKecoData();
 
         if(kecoData === undefined || kecoData === null) {
             return {statusCode: 500, body: 'No data.'};
         }
 
         let result = this.#parseKecoData(kecoData);
-        result.body = JSON.stringify(result.body, null, 2);
+        await this._saveToS3(this.key, result.body);
+        return { statusCode: 200, body: result.body };
+    }
 
-        return result;
+    async getByStations(stationNameList) {
+        if (this.ctprvnRltmMesureDnsty == undefined) {
+            let kecoData = await this._loadFromS3(this.key);
+            if (kecoData) {
+                this.ctprvnRltmMesureDnsty = kecoData;
+            }
+            else {
+                kecoData = await this.#getKecoData();
+                let result = this.#parseKecoData(kecoData);
+                this.ctprvnRltmMesureDnsty = result.body;
+                await this._saveToS3(this.key, this.ctprvnRltmMesureDnsty);
+            }
+        }
+        // Find stations by stationName
+        let stations = this.ctprvnRltmMesureDnsty.filter(item => stationNameList.includes(item.stationName));
+
+        // check dataTime of stations, if dataTime is older than 1 hour, retry to get data from keco
+        // let now = moment().tz('Asia/Seoul');
+        // let oneHourAgo = now.subtract(1, 'hour');
+        // stations.forEach(station => {
+        //     let dataTime = moment(station.dataTime);
+        //     if (dataTime.isBefore(oneHourAgo)) {
+        //         console.log(`Data for ${station.stationName} is older than 1 hour, retrying to get data from keco`);
+        //     }
+        // });
+
+        if (stations.length > 0) {
+            return { statusCode: 200, body: stations };
+        } else {
+            return { statusCode: 404, body: 'No stations found.' };
+        }
     }
 }

@@ -1,6 +1,8 @@
 
 import moment from "moment-timezone";
-import { MidFcstInfoService } from "./MidFcstInfoService";
+import { MidFcstInfoService } from "./MidFcstInfoService.js";
+
+import regCodeList from '../data/MidFcstInfoService_regCode.csv';
 
 /**
  * 중기기온조회
@@ -12,6 +14,15 @@ export class MidTa extends MidFcstInfoService {
     super();
     this.path = '/getMidTa';
     this.params.regId = '11B10101'; // 서울
+
+    //load data/MidFcstInfoService_regCode.csv
+    this.regCodeList = [];
+    for (const regCode of regCodeList) {
+      this.regCodeList.push({ regName: regCode['구역'], regId: regCode['예보구역코드'] });
+    }
+    // console.info(this.regCodeList);
+    this.data;
+    this.key = `kma/${this.params.tmFc}_${this.params.regId}_midTa`;
   }
 
   #transformData(source, baseDate) {
@@ -46,17 +57,17 @@ export class MidTa extends MidFcstInfoService {
     let item = kmaData.body.items.item[0];
     delete item.regId;
 
-    let result = {
+    let result = [{
       regId: this.params.regId,
       baseDate : moment(this.params.tmFc, 'YYYYMMDDHHmm', "Asia/Seoul").toDate(),
       tmFc: this.params.tmFc,
-    };
+    }];
 
     let baseDate = moment(this.params.tmFc, 'YYYYMMDD', "Asia/Seoul").toDate();
     let data = this.#transformData(item, baseDate);
-    result.data = data;
+    result[0].data = data;
 
-    console.info(result);
+    // console.info(result);
     return { statusCode: 200, body: result };
   }
 
@@ -68,12 +79,40 @@ export class MidTa extends MidFcstInfoService {
       return { statusCode: 400, body: error.message };
     }
 
+    if (this.data) {
+      console.info(`load from memory: ${this.key}`);
+      return { statusCode: 200, body: this.data };
+    }
+    else {
+      this.data = await this._loadFromS3(this.key);
+      if (this.data) {
+        console.info(`load from S3: ${this.key}`);
+        return { statusCode: 200, body: this.data };
+      }
+    }
+
     const kmaData = await this.getKmaData();
     if (kmaData == undefined || kmaData == null) {
       return { statusCode: 500, body: 'Fail to get KMA data.' };
     }
 
     let result = this.#parseKmaData(kmaData);
+    await this._saveToS3(this.key, result.body);
+    console.info(`save to S3: ${this.key}`);
+    this.data = result.body;
+
     return result;
   } 
+
+  getRegId(reg_1depth, reg_2depth) {
+    let regId = this.regCodeList.find(reg => 
+      reg_2depth.includes(reg.regName)
+    );
+    if (regId == undefined) {
+      regId = this.regCodeList.find(reg => 
+        reg_1depth.includes(reg.regName)
+      );
+    }
+    return regId ? regId.regId : null;
+  }
 }
