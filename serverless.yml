@@ -37,7 +37,7 @@ functions:
           method: get
 
   asosmin:
-    handler: kma-scraper/handler.asosminweather
+    handler: kma-scraper/handler.asosmin
     events:
       - httpApi:
           path: /${self:provider.stage}/asosmin/{datetime}
@@ -152,6 +152,15 @@ functions:
     events:
       - httpApi:
           path: /${self:provider.stage}/midseafcst
+          method: get
+    environment:
+      DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}
+
+  asosdaly:
+    handler: kma/handler.asosdaly
+    events:
+      - httpApi:
+          path: /${self:provider.stage}/asosdaly
           method: get
     environment:
       DATA_GO_KR_SERVICE_KEY: ${env:DATA_GO_KR_SERVICE_KEY}

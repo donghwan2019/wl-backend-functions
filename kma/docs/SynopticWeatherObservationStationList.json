@@ -1,0 +1,486 @@
+{
+  "metadata": {
+    "title": "지상관측소 목록 (Synoptic Weather Observation Station List)",
+    "description": "기상청 지상관측소 지점번호, 지점명, 관리관서 정보",
+    "source": "기상청 (Korea Meteorological Administration)",
+    "totalStations": 95,
+    "lastUpdated": "2025-07-24"
+  },
+  "stations": [
+    {
+      "stnId": "90",
+      "stationName": "속초",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "93",
+      "stationName": "북춘천",
+      "office": "춘천기상대"
+    },
+    {
+      "stnId": "95",
+      "stationName": "철원",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "98",
+      "stationName": "동두천",
+      "office": "수도권기상청"
+    },
+    {
+      "stnId": "99",
+      "stationName": "파주",
+      "office": "수도권기상청"
+    },
+    {
+      "stnId": "100",
+      "stationName": "대관령",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "101",
+      "stationName": "춘천",
+      "office": "춘천기상대"
+    },
+    {
+      "stnId": "102",
+      "stationName": "백령도",
+      "office": "수도권기상청"
+    },
+    {
+      "stnId": "104",
+      "stationName": "북강릉",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "105",
+      "stationName": "강릉",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "106",
+      "stationName": "동해",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "108",
+      "stationName": "서울",
+      "office": "수도권기상청"
+    },
+    {
+      "stnId": "112",
+      "stationName": "인천",
+      "office": "수도권기상청"
+    },
+    {
+      "stnId": "114",
+      "stationName": "원주",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "115",
+      "stationName": "울릉도",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "119",
+      "stationName": "수원",
+      "office": "수도권기상청"
+    },
+    {
+      "stnId": "121",
+      "stationName": "영월",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "127",
+      "stationName": "충주",
+      "office": "청주기상지청"
+    },
+    {
+      "stnId": "129",
+      "stationName": "서산",
+      "office": "홍성기상대"
+    },
+    {
+      "stnId": "130",
+      "stationName": "울진",
+      "office": "안동기상대"
+    },
+    {
+      "stnId": "131",
+      "stationName": "청주",
+      "office": "청주기상지청"
+    },
+    {
+      "stnId": "133",
+      "stationName": "대전",
+      "office": "대전지방기상청"
+    },
+    {
+      "stnId": "135",
+      "stationName": "추풍령",
+      "office": "청주기상지청"
+    },
+    {
+      "stnId": "136",
+      "stationName": "안동",
+      "office": "안동기상대"
+    },
+    {
+      "stnId": "137",
+      "stationName": "상주",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "138",
+      "stationName": "포항",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "140",
+      "stationName": "군산",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "143",
+      "stationName": "대구",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "146",
+      "stationName": "전주",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "152",
+      "stationName": "울산",
+      "office": "울산기상대"
+    },
+    {
+      "stnId": "155",
+      "stationName": "창원",
+      "office": "창원기상대"
+    },
+    {
+      "stnId": "156",
+      "stationName": "광주",
+      "office": "광주지방기상청"
+    },
+    {
+      "stnId": "159",
+      "stationName": "부산",
+      "office": "부산지방기상청"
+    },
+    {
+      "stnId": "162",
+      "stationName": "통영",
+      "office": "부산지방기상청"
+    },
+    {
+      "stnId": "165",
+      "stationName": "목포",
+      "office": "목포기상대"
+    },
+    {
+      "stnId": "168",
+      "stationName": "여수",
+      "office": "광주지방기상청"
+    },
+    {
+      "stnId": "169",
+      "stationName": "흑산도",
+      "office": "광주지방기상청"
+    },
+    {
+      "stnId": "170",
+      "stationName": "완도",
+      "office": "목포기상대"
+    },
+    {
+      "stnId": "172",
+      "stationName": "고창",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "174",
+      "stationName": "순천",
+      "office": "광주지방기상청"
+    },
+    {
+      "stnId": "177",
+      "stationName": "홍성",
+      "office": "홍성기상대"
+    },
+    {
+      "stnId": "184",
+      "stationName": "제주",
+      "office": "제주지방기상청"
+    },
+    {
+      "stnId": "185",
+      "stationName": "고산",
+      "office": "제주지방기상청"
+    },
+    {
+      "stnId": "188",
+      "stationName": "성산",
+      "office": "제주지방기상청"
+    },
+    {
+      "stnId": "189",
+      "stationName": "서귀포",
+      "office": "제주지방기상청"
+    },
+    {
+      "stnId": "192",
+      "stationName": "진주",
+      "office": "창원기상대"
+    },
+    {
+      "stnId": "201",
+      "stationName": "강화",
+      "office": "인천기상대"
+    },
+    {
+      "stnId": "202",
+      "stationName": "양평",
+      "office": "수도권기상청"
+    },
+    {
+      "stnId": "203",
+      "stationName": "이천",
+      "office": "수도권기상청"
+    },
+    {
+      "stnId": "211",
+      "stationName": "인제",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "212",
+      "stationName": "홍천",
+      "office": "춘천기상대"
+    },
+    {
+      "stnId": "216",
+      "stationName": "태백",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "217",
+      "stationName": "정선군",
+      "office": "강원지방기상청"
+    },
+    {
+      "stnId": "221",
+      "stationName": "제천",
+      "office": "청주기상지청"
+    },
+    {
+      "stnId": "226",
+      "stationName": "보은",
+      "office": "청주기상지청"
+    },
+    {
+      "stnId": "232",
+      "stationName": "천안",
+      "office": "대전지방기상청"
+    },
+    {
+      "stnId": "235",
+      "stationName": "보령",
+      "office": "대전지방기상청"
+    },
+    {
+      "stnId": "236",
+      "stationName": "부여",
+      "office": "대전지방기상청"
+    },
+    {
+      "stnId": "238",
+      "stationName": "금산",
+      "office": "대전지방기상청"
+    },
+    {
+      "stnId": "239",
+      "stationName": "세종",
+      "office": "대전지방기상청"
+    },
+    {
+      "stnId": "243",
+      "stationName": "부안",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "244",
+      "stationName": "임실",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "245",
+      "stationName": "정읍",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "247",
+      "stationName": "남원",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "248",
+      "stationName": "장수",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "251",
+      "stationName": "고창군",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "252",
+      "stationName": "영광군",
+      "office": "광주지방기상청"
+    },
+    {
+      "stnId": "253",
+      "stationName": "김해시",
+      "office": "부산지방기상청"
+    },
+    {
+      "stnId": "254",
+      "stationName": "순창군",
+      "office": "전주기상지청"
+    },
+    {
+      "stnId": "255",
+      "stationName": "북창원",
+      "office": "창원기상대"
+    },
+    {
+      "stnId": "257",
+      "stationName": "양산시",
+      "office": "울산기상대"
+    },
+    {
+      "stnId": "258",
+      "stationName": "보성군",
+      "office": "광주지방기상청"
+    },
+    {
+      "stnId": "259",
+      "stationName": "강진군",
+      "office": "목포기상대"
+    },
+    {
+      "stnId": "260",
+      "stationName": "장흥",
+      "office": "목포기상대"
+    },
+    {
+      "stnId": "261",
+      "stationName": "해남",
+      "office": "목포기상대"
+    },
+    {
+      "stnId": "262",
+      "stationName": "고흥",
+      "office": "광주지방기상청"
+    },
+    {
+      "stnId": "263",
+      "stationName": "의령군",
+      "office": "창원기상대"
+    },
+    {
+      "stnId": "264",
+      "stationName": "함양군",
+      "office": "창원기상대"
+    },
+    {
+      "stnId": "266",
+      "stationName": "광양시",
+      "office": "광주지방기상청"
+    },
+    {
+      "stnId": "268",
+      "stationName": "진도군",
+      "office": "목포기상대"
+    },
+    {
+      "stnId": "271",
+      "stationName": "봉화",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "272",
+      "stationName": "영주",
+      "office": "안동기상대"
+    },
+    {
+      "stnId": "273",
+      "stationName": "문경",
+      "office": "안동기상대"
+    },
+    {
+      "stnId": "276",
+      "stationName": "청송군",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "277",
+      "stationName": "영덕",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "278",
+      "stationName": "의성",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "279",
+      "stationName": "구미",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "281",
+      "stationName": "영천",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "283",
+      "stationName": "경주시",
+      "office": "대구지방기상청"
+    },
+    {
+      "stnId": "284",
+      "stationName": "거창",
+      "office": "울산기상대"
+    },
+    {
+      "stnId": "285",
+      "stationName": "합천",
+      "office": "울산기상대"
+    },
+    {
+      "stnId": "288",
+      "stationName": "밀양",
+      "office": "울산기상대"
+    },
+    {
+      "stnId": "289",
+      "stationName": "산청",
+      "office": "창원기상대"
+    },
+    {
+      "stnId": "294",
+      "stationName": "거제",
+      "office": "부산지방기상청"
+    },
+    {
+      "stnId": "295",
+      "stationName": "남해",
+      "office": "부산지방기상청"
+    }
+  ]
+}
