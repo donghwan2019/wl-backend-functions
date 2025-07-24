@@ -1,0 +1,7 @@
+{
+  "queryStringParameters": {
+    "startDt": "20241220",
+    "endDt": "20241220",
+    "stnIds": "108,105,101"
+  }
+}
