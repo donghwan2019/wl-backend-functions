@@ -9,7 +9,7 @@ export class ControllerS3 {
 
   async _saveToS3(key, list) {
     console.log(
-      `key: ${key} length: ${list.length} [0] ${JSON.stringify(
+      `save to S3 key: ${key} length: ${list.length} [0] ${JSON.stringify(
         list[0],
         null,
         2
@@ -39,6 +39,7 @@ export class ControllerS3 {
         Bucket: this.bucket,
         Key: `${key}.ndjson`,
       };
+      console.log(`load from S3: ${key}`);
       const data = await this.s3.getObject(params).promise();
       const ndjsonData = data.Body.toString("utf-8");
 

@@ -44,7 +44,7 @@ export class KmaScraper extends ControllerS3 {
                 return asosInfoList;
         }
 
-        console.info('pubDate: ', asosInfoList.pubDate);
+        console.info('parse ASOS pubDate: ', asosInfoList.pubDate);
 
         const propertyName = ['stnId', 'stnName', 'altitude', 'rns', 'rs15m', 'rs1h', 'rs3h', 'rs6h', 'rs12h', 'rs1d', 't1h',
             'vec1', 'wdd1', 'wsd1', 'vec', 'wdd', 'wsd', 'reh', 'hPa', 'addr'];
@@ -52,7 +52,7 @@ export class KmaScraper extends ControllerS3 {
         let table = $('table table');
 
         let trs = table.find('tr');
-        console.info('trs: ', trs.length);
+        console.info('parse ASOS trs: ', trs.length);
 
         trs.each((i, tr) => {
             if (i === 0) {
@@ -63,7 +63,8 @@ export class KmaScraper extends ControllerS3 {
             let tds = $(tr).find('td');
 
             let stnMinInfo = {};
-            stnMinInfo.date = new Date(asosInfoList.pubDate);
+            stnMinInfo.pubDate = asosInfoList.pubDate;
+            stnMinInfo.date = moment(asosInfoList.pubDate, "YYYY.MM.DD.HH:mm").tz("Asia/Seoul");
 
             tds.each((j, td) => {
                let tdText = $(td).text().replace(/\s+/, '');
@@ -127,16 +128,18 @@ export class KmaScraper extends ControllerS3 {
     
     /**
      * 2022.11.22 21:30 -> 202211222130 
-     * @param {*} datetime 
+     * 
+     * @param {object} params 
+     * @param {string} [params.datetime] 
      * @returns 
      */
-    async getASOS(datetime) {
+    async getASOS(params) {
       let tm;
       let now = moment().tz('Asia/Seoul').subtract(3, 'minutes');
-      if (datetime) {
-        let param = moment(datetime, 'YYYYMMDDHHmm', "Asia/Seoul").format('YYYYMMDDHHmm');
+      if (params?.datetime) {
+        let param = moment(params?.datetime, 'YYYYMMDDHHmm', true).tz("Asia/Seoul");
         if (now.isBefore(param)) {
-          tm = param;
+          tm = params.datetime;
         }
         else {
           tm = now.format('YYYYMMDDHHmm');
@@ -146,7 +149,7 @@ export class KmaScraper extends ControllerS3 {
         //before 3mins
         tm = now.format('YYYYMMDDHHmm');
       }
-      this.asosKey = `kma-scraper/asos/${tm}`;
+      this.asosKey = `kma-scraper/asosmin/${tm}`;
 
       if (this.asosList) {
         return {statusCode: 200, body: this.asosList};
@@ -161,7 +164,7 @@ export class KmaScraper extends ControllerS3 {
 
       const url = this.domain + `/cgi-bin/aws/nph-aws_txt_min?${tm}`;
 
-      console.info(url);
+      console.info(`get_ASOS url: ${url}`);
         
       const response = await axios.get(url, {responseEncoding: 'binary', responseType: 'arraybuffer'});
       const body = response.data;
@@ -197,6 +200,7 @@ export class KmaScraper extends ControllerS3 {
       cityWeather.pubDate = $(".cmp-table-topinfo").text();
       cityWeather.pubDate = cityWeather.pubDate.replace("기상실황표","");
 
+      // cityWeather.pubDate = moment(cityWeather.pubDate).tz("Asia/Seoul");
       console.info(`pubDate: ${cityWeather.pubDate}`);
 
 			if (pubDate) {
@@ -340,11 +344,12 @@ export class KmaScraper extends ControllerS3 {
         });
 
         weather.pubDate = cityWeather.pubDate;
-        weather.date = new Date(cityWeather.pubDate);
+        weather.date = moment(cityWeather.pubDate, "YYYY.MM.DD.HH:00").tz("Asia/Seoul");
 
         if (weather.stnName === '제주') {
           console.info(`weather: ${JSON.stringify(weather)}`);
         }
+
         if (weather.stnId) {
           //console.info(JSON.stringify(weather));
           cityWeather.cityList.push(weather);
@@ -356,18 +361,19 @@ export class KmaScraper extends ControllerS3 {
 
     /**
      * 
-     * @param {string} datetime 
+     * @param {object} params 
+     * @param {string} [params.datetime] 
      * @returns 
      */
-    async getCityWeather(datetime) {
+    async getCityWeather(params) {
         let tm;
-        if (datetime) {
-            tm = moment(datetime, 'YYYYMMDDHHmm', "Asia/Seoul").format('YYYY.MM.DD.HH:00');
+        if (params?.datetime) {
+            tm = moment(params?.datetime, 'YYYYMMDDHHmm', "Asia/Seoul").format('YYYY.MM.DD.HH:00');
         }
         else {
           tm = moment().tz('Asia/Seoul').format('YYYY.MM.DD.HH:00');
         }
-        this.cityWeatherKey = `kma-scraper/cityWeather/${tm}`;
+        this.cityWeatherKey = `kma-scraper/cityweather/${tm}`;
 
         if (this.cityWeatherList) {
           return {statusCode: 200, body: this.cityWeatherList};
@@ -400,7 +406,7 @@ export class KmaScraper extends ControllerS3 {
             const strContents = iconv.decode(body, 'utf-8').toString();
             let $ = cheerio.load(strContents);
 
-            this.cityWeatherList = this.#parseCityWeather($, datetime);
+            this.cityWeatherList = this.#parseCityWeather($, params?.datetime);
             await this._saveToS3(this.cityWeatherKey, this.cityWeatherList);
             result.body = this.cityWeatherList;
         }
@@ -421,7 +427,7 @@ export class KmaScraper extends ControllerS3 {
     }
 
     async #makeStnInfoList() {
-      console.log('makeStnInfoList');
+      console.log('********* makeStnInfoList *********');
 
       const now = moment().tz('Asia/Seoul');
       this.stnInfoKey = `kma-scraper/stnInfo/${now.format('YYYYMM')}`;
@@ -451,11 +457,12 @@ export class KmaScraper extends ControllerS3 {
 
       if (!latestAsosList) {
         console.info('There is no ASOS data in S3.');
-        this.getASOS();
+        await this.getASOS();
         latestAsosList = this.asosList;
       }
 
-      console.log(`latestAsosList: ${JSON.stringify(latestAsosList[0], null, 2)}`);
+      console.log(`latestAsosList: ${latestAsosList.length}`);
+      // console.log(`latestAsosList: ${JSON.stringify(latestAsosList[0], null, 2)}`);
 
       let latestCityWeatherList;
       if (this.cityWeatherList) {
@@ -471,10 +478,11 @@ export class KmaScraper extends ControllerS3 {
       }
       if (!latestCityWeatherList) {
         console.info('There is no city weather data in S3.');
-        this.getCityWeather();
+        await this.getCityWeather();
         latestCityWeatherList = this.cityWeatherList;
       }
-      console.log(`latestCityWeatherList: ${JSON.stringify(latestCityWeatherList[0], null, 2)}`);
+      console.log(`latestCityWeatherList: ${latestCityWeatherList.length}`);
+      // console.log(`latestCityWeatherList: ${JSON.stringify(latestCityWeatherList[0], null, 2)}`);
 
       //mark asos is city weather stn in asosList
       for (let i = 0; i < latestAsosList.length; i++) {
@@ -532,13 +540,13 @@ export class KmaScraper extends ControllerS3 {
     }
 
     /**
-     * get stninfo near geocoordinate
+     * get stninfo near geocoordinate 3 stations 
      * @param {object} locInfo 
      * @param {number} locInfo.lat
      * @param {number} locInfo.lon
-     * @param {string} locInfo.reg_1depth_name
-     * @param {string} locInfo.reg_2depth_name
-     * @returns 
+     * @param {string} [locInfo.reg_1depth_name]
+     * @param {string} [locInfo.reg_2depth_name]
+     * @returns {object[]} nearStnList
      */
     async getNearStnList(locInfo) {
       let nearStnList = null;
@@ -550,11 +558,59 @@ export class KmaScraper extends ControllerS3 {
           this.stnInfoList = await this.#getStnInfoList();
         }
       }
-      //가장 city weather stnd과 가장 가까운 asos stnd를 추출하여 전달
-      console.log(`this.stnInfoList: ${JSON.stringify(this.stnInfoList[0], null, 2)}`);
-      //figure out the nearest stn from locInfo
-      //first isCityWeather is true
-      //second is the nearest distance
+      console.log(`this.stnInfoList[0]: ${JSON.stringify(this.stnInfoList[0], null, 2)}`);
+
+      if (locInfo) {
+        if (locInfo.reg_1depth_name) {
+          nearStnList = this.stnInfoList.filter(stn => stn.region_1depth_name === locInfo.reg_1depth_name);
+          if (locInfo.reg_2depth_name && nearStnList.length > 0) {
+            nearStnList = nearStnList.filter(stn => stn.region_2depth_name === locInfo.reg_2depth_name);
+          }
+          nearStnList = nearStnList.slice(0, 3);
+          return nearStnList;
+        }
+
+        if (locInfo.lat && locInfo.lon) {
+          const calculateDistance = (lat1, lon1, lat2, lon2) => {
+            const toRad = (value) => (value * Math.PI) / 180;
+            const R = 6371; // Radius of the Earth in km
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = 
+              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in km
+          };
+
+          //가장 가까운 station 3개 찾는데, 그중에 city weather stn이 있으면 그것을 0번으로 변경해서 전달
+          nearStnList = this.stnInfoList
+            .map(stn => ({
+              ...stn,
+              distance: calculateDistance(locInfo.lat, locInfo.lon, parseFloat(stn.y), parseFloat(stn.x))
+            }))
+            .sort((a, b) => a.distance - b.distance);
+
+          if (nearStnList.length > 0) {
+            for (let i = 0; i < nearStnList.length; i++) {
+              if (nearStnList[i].isCityWeather) {
+                let temp = nearStnList[0];
+                nearStnList[0] = nearStnList[i];
+                nearStnList[i] = temp;
+                break;
+              }
+            }
+          }
+          nearStnList = nearStnList.slice(0, 3);
+          return nearStnList;
+        }
+
+        console.warn('lat and lon or reg_1depth_name and reg_2depth_name are required');
+      }
+      else {
+        console.warn('locInfo(queryStringParameters) is null');
+      }
 
       return nearStnList;
     }

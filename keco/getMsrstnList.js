@@ -40,7 +40,7 @@ export class MsrstnList extends Keco {
     } else {
       key = `keco/${this.params.base_date}_msrstnList`;
       kecoData = await this._loadFromS3(key);
-      console.log(kecoData);
+      console.log(`msrstnList: ${JSON.stringify(kecoData, null, 2)}`);
       if (kecoData) {
         return { statusCode: 200, body: kecoData };
       }

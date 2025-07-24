@@ -34,7 +34,7 @@ export class Keco extends ControllerS3 {
 
         const { data } = await axios.get(url, { params: this.params });
         if (data?.response == undefined) {
-            console.log(`data: ${data}`);
+            // console.log(`data: ${data}`);
         }
 
         return data?.response;
