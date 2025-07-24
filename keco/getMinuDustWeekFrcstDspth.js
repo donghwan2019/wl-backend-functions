@@ -85,7 +85,7 @@ export class MinuDustWeekFrcstDspth extends Keco {
             }
         }
 
-        console.log(`data: ${JSON.stringify(this.data, null, 2)}`);
+        // console.log(`data: ${JSON.stringify(this.data, null, 2)}`);
 
         let target = this.getTargetFromLocationForFrcstDspth(region_1depth_name, region_2depth_name);
         
@@ -139,7 +139,7 @@ export class MinuDustWeekFrcstDspth extends Keco {
         }
         result.informData.push(temp);
 
-        console.info(`result: ${JSON.stringify(result, null, 2)}`);
+        // console.log(`result: ${JSON.stringify(result, null, 2)}`);
         return { statusCode: 200, body: result };
     }
 }

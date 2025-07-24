@@ -1,92 +1,99 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in NodeJS'
-description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v3
-platform: AWS
-language: nodeJS
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Weather Labs Backend Functions
 
-# Serverless Framework Node HTTP API on AWS
+A comprehensive weather data API built with AWS Lambda and the Serverless Framework, aggregating meteorological and air quality data from Korean government sources.
 
-This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
+## Overview
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
+This project provides a unified API for accessing weather forecasts, current conditions, and air quality data from multiple Korean sources including:
+- **KMA (Korea Meteorological Administration)** - Official weather data
+- **KECO (Korea Environment Corporation)** - Air quality measurements  
+- **Web scraping** - Additional weather station data
+- **Location services** - Geographic data via Daum API
 
-## Usage
+## Architecture
+
+- **Runtime**: Node.js 20.x on AWS Lambda (ARM64)
+- **API Gateway**: HTTP API with CORS enabled
+- **CloudFront**: CDN with 60-second caching
+- **Framework**: Serverless Framework v3
+
+## API Endpoints
+
+### Weather Data (KMA)
+- `GET /{stage}/vilagefcst` - Village weather forecast
+- `GET /{stage}/ultrasrtfcst` - Ultra short-term forecast
+- `GET /{stage}/ultrasrtncst` - Ultra short-term current conditions
+- `GET /{stage}/midfcst` - Medium-term forecast
+- `GET /{stage}/midlandfcst` - Medium-term land forecast
+- `GET /{stage}/midta` - Medium-term temperature
+- `GET /{stage}/midseafcst` - Medium-term sea forecast
+
+### Air Quality (KECO)
+- `GET /{stage}/msrstnlist` - Measurement station list
+- `GET /{stage}/ctprvnrltmmesurednsty/{datetime}` - Real-time air quality by region
+- `GET /{stage}/minudustfrcstdspth/{datetime}` - Fine dust forecast
+- `GET /{stage}/minudustweekfrcstdspth/{datetime}` - Weekly fine dust forecast
+
+### Weather Scraping
+- `GET /{stage}/asosmin/{datetime}` - ASOS minute data
+- `GET /{stage}/cityweather` - City weather conditions
+- `GET /{stage}/nearstnlist` - Nearby weather stations
+
+### Aggregated Services
+- `GET /{stage}/todayweather` - Combined today's weather data
+- `GET /{stage}/geo` - Geographic location services
+
+## Environment Variables
+
+```bash
+DATA_GO_KR_SERVICE_KEY=your_data_go_kr_api_key
+DAUM_API_KEY=your_daum_api_key
+```
+
+## Development
+
+### Prerequisites
+- Node.js 20+
+- AWS CLI configured
+- Serverless Framework CLI
+
+### Local Testing
+```bash
+# Test specific functions
+npm run local:ultrasrtncst
+npm run local:vilagefcst
+npm run local:asosmin
+
+# Test with sample data
+npm run local:ultrasrtncst-test
+npm run local:vilagefcst-test
+```
 
 ### Deployment
-
-```
-$ serverless deploy
-```
-
-After deploying, you should see output similar to:
-
 ```bash
-Deploying aws-node-http-api-project to stage dev (us-east-1)
+# Deploy to dev
+npm run deploy:dev
 
-✔ Service deployed to stack aws-node-http-api-project-dev (152s)
-
-endpoint: GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-functions:
-  hello: aws-node-http-api-project-dev-hello (1.9 kB)
+# Deploy to production
+npm run deploy:prod
 ```
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
-
-### Invocation
-
-After successful deployment, you can call the created application via HTTP:
-
+### Remove Stack
 ```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
+# Remove dev stack
+npm run remove:dev
+
+# Remove prod stack
+npm run remove:prod
 ```
 
-Which should result in response similar to the following (removed `input` content for brevity):
+## Data Sources
 
-```json
-{
-  "message": "Go Serverless v2.0! Your function executed successfully!",
-  "input": {
-    ...
-  }
-}
-```
+- **KMA Open API**: Official Korean weather data
+- **KECO Open API**: Air quality measurements
+- **Weather station scraping**: Additional real-time data
+- **Daum Local API**: Geographic coordinates and addresses
 
-### Local development
+## License
 
-You can invoke your function locally by using the following command:
-
-```bash
-serverless invoke local --function hello
-```
-
-Which should result in response similar to the following:
-
-```
-{
-  "statusCode": 200,
-  "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
-}
-```
-
-
-Alternatively, it is also possible to emulate API Gateway and Lambda locally by using `serverless-offline` plugin. In order to do that, execute the following command:
-
-```bash
-serverless plugin install -n serverless-offline
-```
-
-It will add the `serverless-offline` plugin to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`.
-
-After installation, you can start local emulation with:
-
-```
-serverless offline
-```
-
-To learn more about the capabilities of `serverless-offline`, please refer to its [GitHub repository](https://github.com/dherault/serverless-offline).
+MIT

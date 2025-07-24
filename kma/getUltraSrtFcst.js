@@ -2,7 +2,7 @@ import moment from "moment-timezone";
 import { Kma } from "./getKma.js";
 
 /**
- * 초단기예보조회
+ * 초단기예보조회 (getUltraSrtFcst, shortest term forecast)
  * 매시간 30분에 생성되고 10분마다 최신 정보로 업데이트(기온, 습도, 바람)
  * base_time : 0030, 0130, 0230, 0330, 0430, 0530, 0630, 0730, 0830, 0930, 1030, 1130, 1230, 1330, 1430, 1530, 1630, 1730, 1830, 1930, 2030, 2130, 2230, 2330
  * API 제공 시간(~이후) : 매시 45분이후

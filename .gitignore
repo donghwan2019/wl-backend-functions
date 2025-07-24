@@ -106,3 +106,7 @@ dist
 .webpack/
 
 .env*
+
+.mcp.json
+
+**/.DS_Store
