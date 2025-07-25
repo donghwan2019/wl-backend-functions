@@ -18,8 +18,8 @@ export class CurrentDataGenerator {
    * @returns {Object} Current weather data object
    */
   convertCurrentData(cityWeatherData, asosData, ultraSrtNcst, ultraSrtFcst, vilageFcst, yesterdayCityWeatherData) {
-    let fcstDateStr = moment(asosData[0].pubDate, "YYYY.MM.DD.HH:mm").format("YYYYMMDD");
-    let fcstTimeStr = moment(asosData[0].pubDate, "YYYY.MM.DD.HH:mm").format("HH");
+    let fcstDateStr = moment(asosData[0].pubDate, "YYYY.MM.DD.HH:mm", "Asia/Seoul").format("YYYYMMDD");
+    let fcstTimeStr = moment(asosData[0].pubDate, "YYYY.MM.DD.HH:mm", "Asia/Seoul").format("HH");
     let srtFcst = ultraSrtFcst.filter((item) => item.fcstDateStr === fcstDateStr && item.fcstTimeStr === fcstTimeStr)[0];
     let vilFcst = vilageFcst.filter((item) => item.fcstDateStr === fcstDateStr && item.fcstTimeStr === fcstTimeStr)[0];
 
@@ -35,7 +35,7 @@ export class CurrentDataGenerator {
       //convert format of asosData to YYYYMMDD
       date: fcstDateStr,
       time: fcstTimeStr,
-      dateObj: moment(asosData[0].pubDate, "YYYY.MM.DD.HH:mm").format("YYYY.MM.DD HH:mm"),
+      dateObj: moment(asosData[0].pubDate, "YYYY.MM.DD.HH:mm", "Asia/Seoul").format("YYYY.MM.DD HH:mm"),
       t1h: asosData[0]?.t1h || ultraSrtNcst?.t1h || cityWeatherData[0]?.t1h || srtFcst?.t1h || vilFcst?.tmp,
       rn1: asosData[0].rs1h || ultraSrtNcst?.rn1,
       sky: Math.min(Math.floor(cityWeatherData[0].cloud/2.5), 3)+1 || srtFcst?.sky || vilFcst?.sky,

@@ -256,6 +256,10 @@ Based on git history:
 - **Data Integration**: Enhanced `todayweather` with KECO air quality data
 - **S3 Optimization**: Improved data storage and retrieval patterns
 
+## GitHub Issues
+
+**Repository**: https://github.com/donghwan2019/wl-backend-functions
+
 ## Quick Reference
 
 ### Key Files

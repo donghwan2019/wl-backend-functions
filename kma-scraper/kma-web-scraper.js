@@ -64,7 +64,7 @@ export class KmaScraper extends ControllerS3 {
 
             let stnMinInfo = {};
             stnMinInfo.pubDate = asosInfoList.pubDate;
-            stnMinInfo.date = moment(asosInfoList.pubDate, "YYYY.MM.DD.HH:mm").tz("Asia/Seoul");
+            stnMinInfo.date = moment(asosInfoList.pubDate, "YYYY.MM.DD.HH:mm", "Asia/Seoul");
 
             tds.each((j, td) => {
                let tdText = $(td).text().replace(/\s+/, '');
@@ -137,7 +137,7 @@ export class KmaScraper extends ControllerS3 {
       let tm;
       let now = moment().tz('Asia/Seoul').subtract(3, 'minutes');
       if (params?.datetime) {
-        let param = moment(params?.datetime, 'YYYYMMDDHHmm', true).tz("Asia/Seoul");
+        let param = moment(params?.datetime, 'YYYYMMDDHHmm', "Asia/Seoul");
         if (now.isBefore(param)) {
           tm = params.datetime;
         }
@@ -200,11 +200,10 @@ export class KmaScraper extends ControllerS3 {
       cityWeather.pubDate = $(".cmp-table-topinfo").text();
       cityWeather.pubDate = cityWeather.pubDate.replace("기상실황표","");
 
-      // cityWeather.pubDate = moment(cityWeather.pubDate).tz("Asia/Seoul");
       console.info(`pubDate: ${cityWeather.pubDate}`);
 
 			if (pubDate) {
-      	if (new Date(cityWeather.pubDate).getTime() < new Date(pubDate).getTime()) {
+      	if (moment(cityWeather.pubDate, "YYYY.MM.DD.HH:00", "Asia/Seoul").isBefore(pubDate)) {
         	let err = new Error("city weather is not updated yet pubDate=" + 
           cityWeather.pubDate);
         	console.warn(err);
@@ -263,7 +262,7 @@ export class KmaScraper extends ControllerS3 {
             propertyName.push("wsd");
             break;
           case "풍속writeWindSpeedUnit();":
-            propertyName.push("wsd");
+            propertyName.push("wsd2");
             break;
           case "해면기압":
             propertyName.push("hPa");
@@ -304,6 +303,8 @@ export class KmaScraper extends ControllerS3 {
           tdText = tdText.replace(/(\r\n|\n|\r)/gm, "");
           tdText = tdText.replace(/\s+/, "");
 
+          // console.log(`propertyName[i]: ${propertyName[i]}, tdText: ${tdText}`);
+
           if (
             propertyName[i] === "visibility" ||
             propertyName[i] === "cloud" ||
@@ -328,6 +329,13 @@ export class KmaScraper extends ControllerS3 {
             if (!isNaN(val)) {
               weather[propertyName[i]] = val;
             }
+          } else if (propertyName[i] === "wsd2") {
+            //tdText = writeWindSpeed('8.1',false,'', '', 1);
+            //parsing for get 8.1
+            const match = tdText.match(/writeWindSpeed\('(\d+\.\d+)',false,'', '', 1\)/);
+            if (match) {
+              weather['wsd'] = parseFloat(match[1]);
+            }
           } else if (propertyName[i] === "wdd") {
             weather[propertyName[i]] = tdText
               .replace(/동/g, "E")
@@ -344,7 +352,7 @@ export class KmaScraper extends ControllerS3 {
         });
 
         weather.pubDate = cityWeather.pubDate;
-        weather.date = moment(cityWeather.pubDate, "YYYY.MM.DD.HH:00").tz("Asia/Seoul");
+        weather.date = moment(cityWeather.pubDate, "YYYY.MM.DD.HH:00", "Asia/Seoul");
 
         if (weather.stnName === '제주') {
           console.info(`weather: ${JSON.stringify(weather)}`);
@@ -387,6 +395,7 @@ export class KmaScraper extends ControllerS3 {
         }
 
 
+        //example: https://www.weather.go.kr/w/observation/land/city-obs.do?tm=2025.07.22.05:00
         let url = this.domain + '/w/observation/land/city-obs.do';
         url += `?tm=${tm}`;
         console.info(`url: ${url}`);
@@ -406,7 +415,7 @@ export class KmaScraper extends ControllerS3 {
             const strContents = iconv.decode(body, 'utf-8').toString();
             let $ = cheerio.load(strContents);
 
-            this.cityWeatherList = this.#parseCityWeather($, params?.datetime);
+            this.cityWeatherList = this.#parseCityWeather($, tm);
             await this._saveToS3(this.cityWeatherKey, this.cityWeatherList);
             result.body = this.cityWeatherList;
         }
