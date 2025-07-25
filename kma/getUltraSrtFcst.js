@@ -16,6 +16,7 @@ export class UltraSrtFcst extends Kma {
         let minute = now.minute();
         if (minute <= 45) {
             now.subtract(1, 'hours');
+            this.params.base_date = now.format('YYYYMMDD');
             this.params.base_time = now.format('HH') + '30';
         }
         this.data;

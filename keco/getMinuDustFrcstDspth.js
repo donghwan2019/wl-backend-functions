@@ -14,10 +14,11 @@ export class MinuDustFrcstDspth extends Keco {
 
     this.data;
 
-    this.params.searchDate = moment().tz("Asia/Seoul").format("YYYY-MM-DD");
+    let now = moment().tz("Asia/Seoul");
+
+    this.params.searchDate = now.format("YYYY-MM-DD");
 
     //it's 05, 11, 17, 23
-    let now = moment().tz("Asia/Seoul");
     if (now.hour() < 5) {
       this.params.searchDate = now.subtract(1, "day").format("YYYY-MM-DD");
     }

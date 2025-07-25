@@ -24,8 +24,9 @@ export class Keco extends ControllerS3 {
             returnType : 'json'
         };
 
-        this.params.base_date = moment().tz('Asia/Seoul').format('YYYYMMDD');
-        this.params.base_time = moment().tz('Asia/Seoul').format('HH00');
+        let now = moment().tz('Asia/Seoul');
+        this.params.base_date = now.format('YYYYMMDD');
+        this.params.base_time = now.format('HH00');
     }
 
     async getKecoData() {
